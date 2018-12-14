@@ -1,0 +1,16 @@
+body {
+  background: url('Images/micro_carbon.png');
+  height: 7em;
+  margin: 2ex 2em;
+}
+
+footer {
+  margin-top: 3ex;
+  margin-bottom: 2px;
+}
+.TR {
+  color: #B93021;
+}
+.imgLightning {
+  width: 20px;
+}
