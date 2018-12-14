@@ -42,7 +42,8 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     name: 'Team Rocket',
-    color: '#B93021',   // #741ECD - Nice purple
+    color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+    //'#B93021',   // #741ECD - Nice purple
     head: 'fang',
     tail: 'regular'
   }
@@ -51,7 +52,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/moveT', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -62,16 +63,20 @@ app.post('/moveT', (request, response) => {
 
   console.log(`--Move ${TRsnake.name}--`);
 
-  var TeamRocket, dir, pathsToFood, bestFood, huntForFood = true, i = 0;
+  var TeamRocket, dir;
 
-
+  console.log("Test 1")
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  console.log("Test 2")
+  console.log(TeamRocket);
 
+  C.eternalLoop();
   if (request.body.turn === 2) {
     TeamRocket.enemies.foreach((e) => {
+      console.log(e.body);
     });
-    C.eternalLoop();
   }
+
   // Response data
   const data = {
     move: dir
@@ -81,7 +86,7 @@ app.post('/moveT', (request, response) => {
 })
 
 // moveMain
-app.post('/move', (request, response) => {
+app.post('/moveM', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;

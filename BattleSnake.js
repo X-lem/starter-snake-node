@@ -11,7 +11,7 @@ module.exports = class BattleSnake {
     // Must initialize in this order
     this.seperateSnakes(snakes, myId);
     this.buildMatrix();
-    this.dangerZones();
+    this.findDangerZones();
   }
 
   // Create the grid matrix
@@ -34,7 +34,7 @@ module.exports = class BattleSnake {
     this.enemies = snakes
   }
 
-  dangerZones() {
+  findDangerZones() {
     const dangerZones = this.dangerZones = [];
 
     this.enemies.forEach((s) => {
