@@ -51,7 +51,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/move', (request, response) => {
+app.post('/moveT', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -83,7 +83,7 @@ app.post('/move', (request, response) => {
 })
 
 // moveMain
-app.post('/moveM', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
