@@ -69,9 +69,7 @@ app.post('/moveT', (request, response) => {
 
   if (request.body.turn === 2) {
     TeamRocket.enemies.foreach((e) => {
-      console.log("Enemies", s.body);
     });
-    console.log("Danger Zone:", TeamRocket.dangerZones);
     C.eternalLoop();
   }
   // Response data
@@ -98,7 +96,6 @@ app.post('/move', (request, response) => {
       
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
-  console.log(TeamRocket);
 
 
   dir = C.huntForFood(TeamRocket, TRsnake, food);
@@ -115,7 +112,6 @@ app.post('/move', (request, response) => {
     if (!dir) console.log("No available direction");
   }
 
-  console.log(dir);
   // Response data
   const data = {
     move: dir
