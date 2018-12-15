@@ -28,9 +28,11 @@ module.exports = class BattleSnake {
 
   // Seperates my snake from the others
   seperateSnakes(snakes, id) {
-    this.mySnake = _.remove(snakes, function(s) {
+    const mySnake = _.remove(snakes, function(s) {
       return s.id === id;
     });
+    this.snake = mySnake[0].body;
+    this.health = mySnake[0].health;
     this.enemies = snakes
   }
 
@@ -137,22 +139,6 @@ module.exports = class BattleSnake {
       let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
       // If the spot is not taken return spot.
       if (!spot.taken) {
-        return spot;
-      }
-    }
-    
-    return false;
-  }
-
-  isTraversable2(x, y) {
-    // Is the spot in bounds?
-    console.log("Test 1");
-    if ((x >= 0 && x <= this.width) && (y >= 0 && y <= this.height)) {    
-      let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
-      console.log("Test 2", spot);
-      // If the spot is not taken return spot.
-      if (!spot.taken) {
-        console.log("Test 3");
         return spot;
       }
     }

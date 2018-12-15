@@ -69,26 +69,17 @@ module.exports = {
     return
   },
 
-  // Returns true if another snake may take food / spot
-  collisionCheck(mySnake, enemies, spot) {
-    // snakes = this.removeMySnake(TRSnake.id, snakes);
-
-    // console.log(TRSnake.name, TRSnake.body);
-
-    // Find if another snake might take the spot and I'm not longer
-    for (var i = 0; i < enemies.length; i++) {
-      let s = enemies[i].body;
-
-      // console.log("S", s);
-
-      if (!directionToImmediatePath(s[i], spot) && mySnake.body.length <= s.length) {
-        return true;
-      }
+  // Returns true if it's completely safe to enter a space
+  isSpotSafe(spot, myLength, dangerZones) {
+    let Z = _.find(dangerZones, function(z) {
+      return spot.x === z.x && spot.y === z.y
+    });
+    
+    if (Z && Z.length >= myLength){
+      return false;
     }
 
-    // console.log
-    
-    return false;
+    return true;
   },
 
   // Returns the xy coordinates of immediate spots a snake can take
@@ -154,16 +145,16 @@ module.exports = {
     var x = head.x, y = head.y;
 
     // Up
-    spot = TeamRocket.isTraversable2(x, y - 1)
+    spot = TeamRocket.isTraversable(x, y - 1);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Down
-    spot = TeamRocket.isTraversable2(x, y + 1);
+    spot = TeamRocket.isTraversable(x, y + 1);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Left
-    spot = TeamRocket.isTraversable2(x - 1, y);
+    spot = TeamRocket.isTraversable(x - 1, y);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Right
-    spot = TeamRocket.isTraversable2(x + 1, y);
+    spot = TeamRocket.isTraversable(x + 1, y);
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    

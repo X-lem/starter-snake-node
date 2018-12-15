@@ -65,17 +65,16 @@ app.post('/move', (request, response) => {
 
   var TeamRocket, dir;
 
-  console.log("Test 1")
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  console.log("Test 2")
-  console.log(TeamRocket);
 
-  C.eternalLoop();
-  if (request.body.turn === 2) {
-    TeamRocket.enemies.foreach((e) => {
-      console.log(e.body);
-    });
-  }
+  var spot = { x:0, y:0 };
+  var danger = [ { x: 0, y: 0, length: 3 }, { x: 5, y: 1, length: 3 } ];
+
+  var safe = C.isSpotSafe(spot, TeamRocket.snake.length, danger);
+  console.log(safe);
+
+  // place spot in unavailableSpaces. re-run build matrix
+
 
   // Response data
   const data = {
