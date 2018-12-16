@@ -11,7 +11,7 @@ const {
 const path = require('path')
 const _ = require('lodash');
 const C = require('./Calculations.js');
-const TR = require('./TeamRocket.js');
+// const TR = require('./TeamRocket.js');
 const BattleSnake = require('./BattleSnake.js');
 
 
@@ -52,7 +52,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/move', (request, response) => {
+app.post('/moveT', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -66,15 +66,25 @@ app.post('/move', (request, response) => {
   var TeamRocket, dir;
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
+  pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
 
-  var spot = { x:0, y:0 };
-  var danger = [ { x: 0, y: 0, length: 3 }, { x: 5, y: 1, length: 3 } ];
+  var safe = C.isSpotSafe(pathsToFood[0], TeamRocket.snake.length, TeamRocket.dangerZones);
 
-  var safe = C.isSpotSafe(spot, TeamRocket.snake.length, danger);
-  console.log(safe);
+  var start = { x:3, y:13 };
+  TeamRocket.unavailableSpaces.push(start);
+  console.log(TeamRocket.unavailableSpaces, TeamRocket.unavailableSpaces.length);
 
-  // place spot in unavailableSpaces. re-run build matrix
+  _.pull(TeamRocket.unavailableSpaces, start);
+  console.log(TeamRocket.unavailableSpaces, TeamRocket.unavailableSpaces.length)
 
+  if (!safe) {
+
+    TeamRocket.buildMatrix();
+    pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[1]);
+  }
+
+  dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
   // Response data
   const data = {
@@ -85,7 +95,7 @@ app.post('/move', (request, response) => {
 })
 
 // moveMain
-app.post('/moveM', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -100,9 +110,7 @@ app.post('/moveM', (request, response) => {
       
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
-
-
-  dir = C.huntForFood(TeamRocket, TRsnake, food);
+  dir = C.huntForFood(TeamRocket, food);
 
   // Can't obtain food, find longest path
   if (!dir) {
@@ -112,8 +120,9 @@ app.post('/moveM', (request, response) => {
   // If all other algorithms fail, pick a direction
   if(!dir) {
     console.log("Last Resort.");
-    dir = C.lastResort(TeamRocket, TRsnake.body[0]);
-    if (!dir) console.log("No available direction");
+    dir = C.lastResort(TeamRocket);
+    console.log("lastResort:", dir);
+    if (!dir) console.log("No available direction.");
   }
 
   // Response data

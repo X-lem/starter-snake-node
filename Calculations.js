@@ -18,18 +18,17 @@ module.exports = {
 
   // Returns next movement in ideal path to obtain food.
   // Otherwise returns false
-  huntForFood(TeamRocket, TRsnake, food) {
+  huntForFood(TeamRocket, food) {
     var dir, bestFood, pathsToFood = [],
       foundFood = false, huntForFood = true, i = 0;
 
-    bestFood = this.prioritizeFood(TRsnake.body[0], food);
+    bestFood = this.prioritizeFood(TeamRocket.head, food);
 
     // Keep itorating to find ideal food.
     do {
       if (i > 0) TeamRocket.buildMatrix();
 
-      // Check to make sure there food left to hunt for
-      pathsToFood[i] = TeamRocket.breadthFirstSearch(TRsnake.body[0], bestFood[i]);
+      pathsToFood[i] = TeamRocket.breadthFirstSearch(TeamRocket.head, bestFood[i]);
 
       // Is the food obtainable?
       if (pathsToFood[i].length === 0) {
@@ -38,7 +37,20 @@ module.exports = {
         continue;
       }
 
-      dir = this.directionToImmediatePath(TRsnake.body[0], pathsToFood[i][0]);
+      // Will I die via collistion? If so try taking another route
+      // Todo: if the danger spot is a food, just continue.
+      if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
+        console.log("Spot isn't safe!");
+
+        // Check for alternate route
+        let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
+        console.log("alt route: ", altRoute);
+        if (altRoute) {
+          pathsToFood[i][0] = altRoute;          
+        }
+      }
+
+      dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
       // Spot is not immediate to head
       if(!dir) {
@@ -46,16 +58,35 @@ module.exports = {
         i++;
         continue;
       }
-      console.log(dir);
-
       
       huntForFood = false; foundFood = true;
     } while(huntForFood && i < bestFood.length);
 
-    if (foundFood) return dir
+    console.log("HuntForFood, dir", dir);
+
+    if (foundFood) return dir;
 
     return false;
+  },
 
+  // Checks for an alternate route to the food
+  // Returns false otherwise
+  alternateRoute(TeamRocket, food, dangerSpot) {
+    console.log("Danger: ", dangerSpot);
+    TeamRocket.unavailableSpaces.push(dangerSpot);
+    TeamRocket.buildMatrix();
+    console.log("unavailableSpaces", TeamRocket.unavailableSpaces);
+    console.log(TeamRocket.matrix);
+    let altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, food);
+    console.log("test 1");
+    _.pull(TeamRocket.unavailableSpaces, dangerSpot);
+    console.log("test 2");
+    // Does route exist and is it safe?
+    if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, [dangerSpot])){
+      console.log("No alt route");
+      return false;
+    }
+    return altRoute;
   },
 
   // Returns false if obtaining a specific food places the snake in a corner
@@ -75,7 +106,7 @@ module.exports = {
       return spot.x === z.x && spot.y === z.y
     });
     
-    if (Z && Z.length >= myLength){
+    if (Z && Z.length >= myLength) {
       return false;
     }
 
@@ -140,21 +171,28 @@ module.exports = {
     return unavailableSpaces;
   },  
 
-  lastResort(TeamRocket, head) {
+  lastResort(TeamRocket) {
+    console.log("lastResort");
+    console.log("TeamRocket head", TeamRocket.head);
     TeamRocket.buildMatrix();
-    var x = head.x, y = head.y;
+    let spot, head = TeamRocket.head,
+        x = TeamRocket.head.x, y = TeamRocket.head.y;
 
     // Up
     spot = TeamRocket.isTraversable(x, y - 1);
+    console.log("UP", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Down
     spot = TeamRocket.isTraversable(x, y + 1);
+    console.log("Down", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Left
     spot = TeamRocket.isTraversable(x - 1, y);
+    console.log("left", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Right
     spot = TeamRocket.isTraversable(x + 1, y);
+    console.log("right", spot);
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    
