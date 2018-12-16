@@ -65,24 +65,19 @@ app.post('/moveT', (request, response) => {
 
   var TeamRocket, dir;
 
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
   var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
   pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
 
-  var safe = C.isSpotSafe(pathsToFood[0], TeamRocket.snake.length, TeamRocket.dangerZones);
+  TeamRocket.food.push({ x: 4, y: 4});
+  var start = { x: 4, y: 8, length: 5 };
+  
 
-  var start = { x:3, y:13 };
-  TeamRocket.unavailableSpaces.push(start);
-  console.log(TeamRocket.unavailableSpaces, TeamRocket.unavailableSpaces.length);
-
-  _.pull(TeamRocket.unavailableSpaces, start);
-  console.log(TeamRocket.unavailableSpaces, TeamRocket.unavailableSpaces.length)
-
-  if (!safe) {
-
-    TeamRocket.buildMatrix();
-    pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[1]);
+  if (_.find(TeamRocket.food, function(m) { return m.x === start.x && m.y === start.y })) {
+    console.log("food is here");
   }
+  else
+    console.log("no food");
 
   dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
@@ -108,7 +103,7 @@ app.post('/move', (request, response) => {
 
   var TeamRocket, dir;
       
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
 
   dir = C.huntForFood(TeamRocket, food);
 
@@ -119,9 +114,7 @@ app.post('/move', (request, response) => {
 
   // If all other algorithms fail, pick a direction
   if(!dir) {
-    console.log("Last Resort.");
     dir = C.lastResort(TeamRocket);
-    console.log("lastResort:", dir);
     if (!dir) console.log("No available direction.");
   }
 

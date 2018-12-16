@@ -38,16 +38,11 @@ module.exports = {
       }
 
       // Will I die via collistion? If so try taking another route
-      // Todo: if the danger spot is a food, just continue.
+      // && _.find(TeamRocket.food, function(f) { return f.x === pathsToFood[i][0].x && f.y === pathsToFood[i][0].y })
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
         console.log("Spot isn't safe!");
-
-        // Check for alternate route
-        let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
-        console.log("alt route: ", altRoute);
-        if (altRoute) {
-          pathsToFood[i][0] = altRoute;          
-        }
+        i++;
+        continue;
       }
 
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
@@ -71,18 +66,16 @@ module.exports = {
 
   // Checks for an alternate route to the food
   // Returns false otherwise
+  // let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
   alternateRoute(TeamRocket, food, dangerSpot) {
     console.log("Danger: ", dangerSpot);
     TeamRocket.unavailableSpaces.push(dangerSpot);
     TeamRocket.buildMatrix();
-    console.log("unavailableSpaces", TeamRocket.unavailableSpaces);
     console.log(TeamRocket.matrix);
     let altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, food);
-    console.log("test 1");
     _.pull(TeamRocket.unavailableSpaces, dangerSpot);
-    console.log("test 2");
     // Does route exist and is it safe?
-    if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, [dangerSpot])){
+    if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, TeamRocket.dangerZones)){
       console.log("No alt route");
       return false;
     }
@@ -102,10 +95,12 @@ module.exports = {
 
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
+    console.log("myLength", myLength);
     let Z = _.find(dangerZones, function(z) {
       return spot.x === z.x && spot.y === z.y
     });
     
+    console.log("Enemy Length: ", Z);
     if (Z && Z.length >= myLength) {
       return false;
     }
@@ -180,19 +175,15 @@ module.exports = {
 
     // Up
     spot = TeamRocket.isTraversable(x, y - 1);
-    console.log("UP", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Down
     spot = TeamRocket.isTraversable(x, y + 1);
-    console.log("Down", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Left
     spot = TeamRocket.isTraversable(x - 1, y);
-    console.log("left", spot)
     if (spot) return this.directionToImmediatePath(head, spot);
     // Right
     spot = TeamRocket.isTraversable(x + 1, y);
-    console.log("right", spot);
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    

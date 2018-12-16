@@ -2,10 +2,11 @@ const _ = require('lodash');
 const C = require('./Calculations.js');
 
 module.exports = class BattleSnake {
-  constructor(width, height, myId, snakes) {
+  constructor(width, height, myId, snakes, food) {
     this.id = myId;
     this.width = width;
     this.height = height;
+    this.food = food
     this.unavailableSpaces = this.getUnavailableSpaces(snakes);
 
     // Must initialize in this order
