@@ -18,18 +18,17 @@ module.exports = {
 
   // Returns next movement in ideal path to obtain food.
   // Otherwise returns false
-  huntForFood(TeamRocket, TRsnake, food) {
+  huntForFood(TeamRocket, food) {
     var dir, bestFood, pathsToFood = [],
       foundFood = false, huntForFood = true, i = 0;
 
-    bestFood = this.prioritizeFood(TRsnake.body[0], food);
+    bestFood = this.prioritizeFood(TeamRocket.head, food);
 
     // Keep itorating to find ideal food.
     do {
       if (i > 0) TeamRocket.buildMatrix();
 
-      // Check to make sure there food left to hunt for
-      pathsToFood[i] = TeamRocket.breadthFirstSearch(TRsnake.body[0], bestFood[i]);
+      pathsToFood[i] = TeamRocket.breadthFirstSearch(TeamRocket.head, bestFood[i]);
 
       // Is the food obtainable?
       if (pathsToFood[i].length === 0) {
@@ -38,7 +37,15 @@ module.exports = {
         continue;
       }
 
-      dir = this.directionToImmediatePath(TRsnake.body[0], pathsToFood[i][0]);
+      // Will I die via collistion? If so try taking another route
+      // && _.find(TeamRocket.food, function(f) { return f.x === pathsToFood[i][0].x && f.y === pathsToFood[i][0].y })
+      if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
+        console.log("Spot isn't safe!");
+        i++;
+        continue;
+      }
+
+      dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
       // Spot is not immediate to head
       if(!dir) {
@@ -46,16 +53,33 @@ module.exports = {
         i++;
         continue;
       }
-      console.log(dir);
-
       
       huntForFood = false; foundFood = true;
     } while(huntForFood && i < bestFood.length);
 
-    if (foundFood) return dir
+    console.log("HuntForFood, dir", dir);
+
+    if (foundFood) return dir;
 
     return false;
+  },
 
+  // Checks for an alternate route to the food
+  // Returns false otherwise
+  // let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
+  alternateRoute(TeamRocket, food, dangerSpot) {
+    console.log("Danger: ", dangerSpot);
+    TeamRocket.unavailableSpaces.push(dangerSpot);
+    TeamRocket.buildMatrix();
+    console.log(TeamRocket.matrix);
+    let altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, food);
+    _.pull(TeamRocket.unavailableSpaces, dangerSpot);
+    // Does route exist and is it safe?
+    if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, TeamRocket.dangerZones)){
+      console.log("No alt route");
+      return false;
+    }
+    return altRoute;
   },
 
   // Returns false if obtaining a specific food places the snake in a corner
@@ -69,26 +93,19 @@ module.exports = {
     return
   },
 
-  // Returns true if another snake may take food / spot
-  collisionCheck(mySnake, enemies, spot) {
-    // snakes = this.removeMySnake(TRSnake.id, snakes);
-
-    // console.log(TRSnake.name, TRSnake.body);
-
-    // Find if another snake might take the spot and I'm not longer
-    for (var i = 0; i < enemies.length; i++) {
-      let s = enemies[i].body;
-
-      // console.log("S", s);
-
-      if (!directionToImmediatePath(s[i], spot) && mySnake.body.length <= s.length) {
-        return true;
-      }
+  // Returns true if it's completely safe to enter a space
+  isSpotSafe(spot, myLength, dangerZones) {
+    console.log("myLength", myLength);
+    let Z = _.find(dangerZones, function(z) {
+      return spot.x === z.x && spot.y === z.y
+    });
+    
+    console.log("Enemy Length: ", Z);
+    if (Z && Z.length >= myLength) {
+      return false;
     }
 
-    // console.log
-    
-    return false;
+    return true;
   },
 
   // Returns the xy coordinates of immediate spots a snake can take
@@ -149,21 +166,24 @@ module.exports = {
     return unavailableSpaces;
   },  
 
-  lastResort(TeamRocket, head) {
+  lastResort(TeamRocket) {
+    console.log("lastResort");
+    console.log("TeamRocket head", TeamRocket.head);
     TeamRocket.buildMatrix();
-    var x = head.x, y = head.y;
+    let spot, head = TeamRocket.head,
+        x = TeamRocket.head.x, y = TeamRocket.head.y;
 
     // Up
-    spot = TeamRocket.isTraversable2(x, y - 1)
+    spot = TeamRocket.isTraversable(x, y - 1);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Down
-    spot = TeamRocket.isTraversable2(x, y + 1);
+    spot = TeamRocket.isTraversable(x, y + 1);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Left
-    spot = TeamRocket.isTraversable2(x - 1, y);
+    spot = TeamRocket.isTraversable(x - 1, y);
     if (spot) return this.directionToImmediatePath(head, spot);
     // Right
-    spot = TeamRocket.isTraversable2(x + 1, y);
+    spot = TeamRocket.isTraversable(x + 1, y);
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    

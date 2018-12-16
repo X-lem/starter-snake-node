@@ -11,7 +11,7 @@ const {
 const path = require('path')
 const _ = require('lodash');
 const C = require('./Calculations.js');
-const TR = require('./TeamRocket.js');
+// const TR = require('./TeamRocket.js');
 const BattleSnake = require('./BattleSnake.js');
 
 
@@ -42,7 +42,8 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     name: 'Team Rocket',
-    color: '#B93021',   // #741ECD - Nice purple
+    color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+    //'#B93021',   // #741ECD - Nice purple
     head: 'fang',
     tail: 'regular'
   }
@@ -62,16 +63,24 @@ app.post('/moveT', (request, response) => {
 
   console.log(`--Move ${TRsnake.name}--`);
 
-  var TeamRocket, dir, pathsToFood, bestFood, huntForFood = true, i = 0;
+  var TeamRocket, dir;
 
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
+  var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
+  pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
 
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  TeamRocket.food.push({ x: 4, y: 4});
+  var start = { x: 4, y: 8, length: 5 };
+  
 
-  if (request.body.turn === 2) {
-    TeamRocket.enemies.foreach((e) => {
-    });
-    C.eternalLoop();
+  if (_.find(TeamRocket.food, function(m) { return m.x === start.x && m.y === start.y })) {
+    console.log("food is here");
   }
+  else
+    console.log("no food");
+
+  dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
+
   // Response data
   const data = {
     move: dir
@@ -94,11 +103,9 @@ app.post('/move', (request, response) => {
 
   var TeamRocket, dir;
       
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
 
-
-
-  dir = C.huntForFood(TeamRocket, TRsnake, food);
+  dir = C.huntForFood(TeamRocket, food);
 
   // Can't obtain food, find longest path
   if (!dir) {
@@ -107,9 +114,8 @@ app.post('/move', (request, response) => {
 
   // If all other algorithms fail, pick a direction
   if(!dir) {
-    console.log("Last Resort.");
-    dir = C.lastResort(TeamRocket, TRsnake.body[0]);
-    if (!dir) console.log("No available direction");
+    dir = C.lastResort(TeamRocket);
+    if (!dir) console.log("No available direction.");
   }
 
   // Response data
