@@ -82,13 +82,20 @@ module.exports = {
     return altRoute;
   },
 
-  // Returns false if obtaining a specific food places the snake in a corner
-  futurePath(snakes, path) {
+  // Returns true if obtaining a specific food places the snake in a corner
+  isFoodTrap(TeamRocket, pathToFood) {
+    console.log("TR Body", TeamRocket.body, TeamRocket.body.length);
+    console.log(pathToFood);
 
-    var futureSnake = _.flatten(path).slice(0, s.length);
+    // futureSnake is the snake when it has eaten the food
+    // Probably add 1 because he ate the food - double test
+    var futureSnake = _.flatten(pathToFood.push(TeamRocket.body)).slice(0, s.length + 1);
 
+    // Find path to next food.
+    var futureSnake = new BattleSnake();
 
-    console.log(futureSnake)
+    console.log("Future Snake", futureSnake, futureSnake.length);
+    console.log("TR Body", TeamRocket.body);
 
     return
   },
