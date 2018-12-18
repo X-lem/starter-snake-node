@@ -42,8 +42,8 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     name: 'Team Rocket',
-    color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
-    //'#B93021',   // #741ECD - Nice purple
+    color: '#B93021',   // #741ECD - Nice purple
+    // color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
     head: 'fang',
     tail: 'regular'
   }
