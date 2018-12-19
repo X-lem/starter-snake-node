@@ -29,10 +29,11 @@ const notFoundHandler = (err, req, res, next) => {
   }
 
   res.status(404)
-  return res.send({
-    status: 404,
-    error: err.message || "These are not the snakes you're looking for",
-  })
+  return res.sendFile(__dirname + "/UI/404.html");
+  // res.send({
+  //   status: 404,
+  //   error: err.message || "These are not the snakes you're looking for.",
+  // })
 }
 
 const genericErrorHandler = (err, req, res, next) => {
