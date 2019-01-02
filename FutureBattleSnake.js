@@ -75,5 +75,15 @@ module.exports = class FutureBattleSnake {
     
     return false;
   }
+  
+  pullRoute(node) {
+    var path = [{x: node.x, y: node.y}];
+    while (node.parent) {
+      node = node.parent;
+      path.push({x: node.x, y: node.y});
+    }
+    path.pop(); // remove head
+    return path.reverse();
+  }
 }
 
