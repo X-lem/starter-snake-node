@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const FutureBattleSnake = require('./FutureBattleSnake.js');
 
 module.exports = {
   // Returns the food pellets in order of distance positionaly to head
@@ -92,7 +93,7 @@ module.exports = {
     var futureSnake = _.flatten(pathToFood.push(TeamRocket.body)).slice(0, s.length + 1);
 
     // Find path to next food.
-    var futureSnake = new BattleSnake();
+    var futureSnake = new FutureBattleSnake(TeamRocket.width, TeamRocket.height, TeamRocket.unavailableSpaces, TeamRocket.food);
 
     console.log("Future Snake", futureSnake, futureSnake.length);
     console.log("TR Body", TeamRocket.body);
