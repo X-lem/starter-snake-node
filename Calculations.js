@@ -94,6 +94,7 @@ module.exports = {
 
     // Find path to next food.
     var futureSnake = new FutureBattleSnake(TeamRocket.width, TeamRocket.height, TeamRocket.unavailableSpaces, TeamRocket.food);
+    futureFood = futureSnake.(futureSnake[0]);
 
     console.log("Future Snake", futureSnake, futureSnake.length);
     console.log("TR Body", TeamRocket.body);
