@@ -100,7 +100,6 @@ app.post('/move', (request, response) => {
   const food = board.food;
   
   console.log(`--Move ${TRsnake.name}--`);
-
   var TeamRocket, dir;
       
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);

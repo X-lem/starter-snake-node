@@ -115,7 +115,7 @@ module.exports = class BattleSnake {
       spaces.push(b);
     }
     return spaces;
-  }  
+  }
   
   immediateSpaces(node) {
     var x = node.x, y = node.y, spot, neighbors = [];
@@ -148,20 +148,6 @@ module.exports = class BattleSnake {
     
     return false;
   }
-
-  // isTraversable2(x, y) {
-  //   // Is the spot in bounds?
-  //   if ((x >= 0 && x <= this.width) && (y >= 0 && y <= this.height)) {
-  //     let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
-  //     console.log("spot", spot);
-  //     // If the spot is not taken return spot.
-  //     if (!spot.taken) {
-  //       return spot;
-  //     }
-  //   }
-    
-  //   return false;
-  // }
 
   // Looks at all the variables within object
   // If a match exists in array return true

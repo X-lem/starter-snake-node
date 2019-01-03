@@ -2,12 +2,15 @@ const _ = require('lodash');
 const C = require('./Calculations.js');
 
 module.exports = class FutureBattleSnake {
-  constructor(width, height, unavailableSpaces, food) {
-    this.width = width;
-    this.height = height;
-    this.food = food
-    this.unavailableSpaces = unavailableSpaces;
+  constructor(BattleSnake, futureSnake) {
+    this.width = BattleSnake.width;
+    this.height = BattleSnake.height;
+    this.food = BattleSnake.food
+    this.unavailableSpaces = this.getUnavailableSpaces(BattleSnake.enemies).concat(futureSnake);
+
     this.buildMatrix();
+    this.snake = futureSnake;
+    this.head = futureSnake[0];
   }
 
   // Create the grid matrix
@@ -84,6 +87,28 @@ module.exports = class FutureBattleSnake {
     }
     path.pop(); // remove head
     return path.reverse();
+  }
+
+  // Looks at all the variables within object
+  // If a match exists in array return true
+  // Otherwise return false
+  existsWithin(array, object) {
+    for (var i = 0; i < array.length; i++) {
+      if(_.isEqual(array[i], object)){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  getUnavailableSpaces(snakes) {
+    const spaces = [];
+    for (const { body } of snakes)
+    for (const b of body) {
+      spaces.push(b);
+    }
+    return spaces;
   }
 }
 

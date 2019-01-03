@@ -46,10 +46,17 @@ module.exports = {
         continue;
       }
 
+      // Will I be stuck in a corner?
+      if (this.isFoodTrap(TeamRocket, pathsToFood[i])) {
+        console.log("It's a trap!");
+        i++;
+        continue;
+      }
+
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
       // Spot is not immediate to head
-      if(!dir) {
+      if (!dir) {
         console.log("Path to food was wrong.");
         i++;
         continue;
@@ -58,7 +65,7 @@ module.exports = {
       huntForFood = false; foundFood = true;
     } while(huntForFood && i < bestFood.length);
 
-    console.log("HuntForFood, dir", dir);
+    console.log("HuntForFood - dir:", dir);
 
     if (foundFood) return dir;
 
@@ -85,19 +92,18 @@ module.exports = {
 
   // Returns true if obtaining a specific food places the snake in a corner
   isFoodTrap(TeamRocket, pathToFood) {
-    console.log("TR Body", TeamRocket.body, TeamRocket.body.length);
-    console.log(pathToFood);
+    console.log("isFoodTrap");
+    console.log("TR Snake", TeamRocket.enemies);
 
     // futureSnake is the snake when it has eaten the food
     // Probably add 1 because he ate the food - double test
-    var futureSnake = _.flatten(pathToFood.push(TeamRocket.body)).slice(0, s.length + 1);
+    var futureSnake = pathToFood.concat(snake).slice(0, snake.length + 1);
 
     // Find path to next food.
-    var futureSnake = new FutureBattleSnake(TeamRocket.width, TeamRocket.height, TeamRocket.unavailableSpaces, TeamRocket.food);
-    futureFood = futureSnake.breadthFirstSearch(futureSnake[0]);
+    var futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
+    //futureFood = futureSnake.breadthFirstSearch(futureSnake.head);
 
-    console.log("Future Snake", futureSnake, futureSnake.length);
-    console.log("TR Body", TeamRocket.body);
+    console.log("Future Snake", futureSnake);
 
     return
   },
@@ -162,18 +168,6 @@ module.exports = {
 
     return false;
   },
-
-  unavailableSpaces(snakes) {
-    var unavailableSpaces = new Array();
-
-    snakes.forEach((snake) => {
-      snake.body.forEach((b) => {
-        unavailableSpaces.push(b);
-      })
-    });
-
-    return unavailableSpaces;
-  },  
 
   lastResort(TeamRocket) {
     console.log("lastResort");
