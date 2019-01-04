@@ -47,10 +47,12 @@ module.exports = {
       }
 
       // Will I be stuck in a corner?
-      if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
-        console.log("It's a trap!");
-        i++;
-        continue;
+      if (i + 1 < bestFood.length) {
+        if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
+          console.log("It's a trap!");
+          i++;
+          continue;
+        }
       }
 
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
@@ -94,11 +96,6 @@ module.exports = {
   isFoodTrap(TeamRocket, pathToFood, bestFood, i) {
     console.log("isFoodTrap");
 
-    // Need to pass in all food. The next food has to be the next one in line.
-
-
-    // futureSnake is the snake when it has eaten the food
-    // Probably add 1 because he ate the food - double test
     console.log("pathToFood", pathToFood, "TeamRocket.snake", TeamRocket.snake);
     var futureSnake = pathToFood.concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
@@ -111,8 +108,9 @@ module.exports = {
 
     console.log("PathToFood", pathToFood);
 
-    this.eternalLoop();
-    return
+    if (pathToFood) return true;
+
+    return false;
   },
 
   // Returns true if it's completely safe to enter a space
