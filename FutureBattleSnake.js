@@ -5,7 +5,6 @@ module.exports = class FutureBattleSnake {
   constructor(BattleSnake, futureSnake) {
     this.width = BattleSnake.width;
     this.height = BattleSnake.height;
-    this.food = BattleSnake.food
     this.unavailableSpaces = this.getUnavailableSpaces(BattleSnake.enemies).concat(futureSnake);
 
     this.buildMatrix();

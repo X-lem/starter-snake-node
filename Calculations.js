@@ -47,7 +47,7 @@ module.exports = {
       }
 
       // Will I be stuck in a corner?
-      if (this.isFoodTrap(TeamRocket, pathsToFood[i])) {
+      if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
         console.log("It's a trap!");
         i++;
         continue;
@@ -91,31 +91,36 @@ module.exports = {
   },
 
   // Returns true if obtaining a specific food places the snake in a corner
-  isFoodTrap(TeamRocket, pathToFood) {
+  isFoodTrap(TeamRocket, pathToFood, bestFood, i) {
     console.log("isFoodTrap");
-    console.log("TR Snake", TeamRocket.enemies);
+
+    // Need to pass in all food. The next food has to be the next one in line.
+
 
     // futureSnake is the snake when it has eaten the food
     // Probably add 1 because he ate the food - double test
-    var futureSnake = pathToFood.concat(snake).slice(0, snake.length + 1);
+    console.log("pathToFood", pathToFood, "TeamRocket.snake", TeamRocket.snake);
+    var futureSnake = pathToFood.concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
     // Find path to next food.
-    var futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-    //futureFood = futureSnake.breadthFirstSearch(futureSnake.head);
+    futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
 
-    console.log("Future Snake", futureSnake);
+    console.log("futureSnake.head", futureSnake.head, "bestFood", bestFood[i + 1]);
 
+    var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
+
+    console.log("PathToFood", pathToFood);
+
+    this.eternalLoop();
     return
   },
 
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
-    console.log("myLength", myLength);
     let Z = _.find(dangerZones, function(z) {
       return spot.x === z.x && spot.y === z.y
     });
     
-    console.log("Enemy Length: ", Z);
     if (Z && Z.length >= myLength) {
       return false;
     }

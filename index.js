@@ -65,9 +65,17 @@ app.post('/moveT', (request, response) => {
 
   var TeamRocket, dir;
 
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
   var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
   pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
+
+  console.time("breadthFirstSearch");
+  pathToFood = TeamRocket.breadthFirstSearch(TeamRocket.head, food[0]);
+  console.timeEnd("breadthFirstSearch");
+
+  console.time("buildMatrix");
+  TeamRocket.buildMatrix();
+  console.timeEnd("buildMatrix");
 
   TeamRocket.food.push({ x: 4, y: 4});
   var start = { x: 4, y: 8, length: 5 };
@@ -101,8 +109,9 @@ app.post('/move', (request, response) => {
   
   console.log(`--Move ${TRsnake.name}--`);
   var TeamRocket, dir;
-      
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
+
+
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
   dir = C.huntForFood(TeamRocket, food);
 
