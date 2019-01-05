@@ -46,14 +46,18 @@ module.exports = {
         continue;
       }
 
+      console.log("Pre pathsToFood", pathsToFood[i]);
       // Will I be stuck in a corner?
       if (i + 1 < bestFood.length) {
+        console.log("Enough food")
         if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
           console.log("It's a trap!");
           i++;
           continue;
         }
       }
+
+      console.log("Post pathsToFood", pathsToFood[i]);
 
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
@@ -93,24 +97,26 @@ module.exports = {
   },
 
   // Returns true if obtaining a specific food places the snake in a corner
+  // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, pathToFood, bestFood, i) {
-    console.log("isFoodTrap");
-
-    console.log("pathToFood", pathToFood, "TeamRocket.snake", TeamRocket.snake);
-    var futureSnake = pathToFood.concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
+    console.log("Test 1");
+    const foodPath = _.cloneDeep(pathToFood);
+    //console.log("Original foodPath", foodPath, "TeamRocket.snake", TeamRocket.snake);
+    var futureSnake = foodPath.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
     // Find path to next food.
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
 
-    console.log("futureSnake.head", futureSnake.head, "bestFood", bestFood[i + 1]);
+    // console.log("futureSnake", futureSnake.snake, "future bestFood", bestFood[i + 1]);
+    // console.log("unavailableSpaces", futureSnake.unavailableSpaces);
 
-    var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
+    var foodPath = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
 
-    console.log("PathToFood", pathToFood);
+    // console.log("PathToFood", foodPath);
 
-    if (pathToFood) return true;
+    if (foodPath) return false;
 
-    return false;
+    return true;
   },
 
   // Returns true if it's completely safe to enter a space
