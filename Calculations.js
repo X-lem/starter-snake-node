@@ -100,21 +100,24 @@ module.exports = {
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, pathToFood, bestFood, i) {
     console.log("Test 1");
-    const foodPath = _.cloneDeep(pathToFood);
-    //console.log("Original foodPath", foodPath, "TeamRocket.snake", TeamRocket.snake);
-    var futureSnake = foodPath.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
+    // let pathToFood = foodPath;
+    // let pathToFood = _.cloneDeep(foodPath);
+    console.log(pathToFood);
+
+
+    var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
+    console.log("Test 2");
 
     // Find path to next food.
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
+    console.log("Test 3");
 
-    // console.log("futureSnake", futureSnake.snake, "future bestFood", bestFood[i + 1]);
-    // console.log("unavailableSpaces", futureSnake.unavailableSpaces);
-
-    var foodPath = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
-
+    var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
+    console.log(pathToFood);
+    console.log("Test 4");
     // console.log("PathToFood", foodPath);
 
-    if (foodPath) return false;
+    if (pathToFood) return false;
 
     return true;
   },
