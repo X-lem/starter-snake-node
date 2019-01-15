@@ -99,25 +99,16 @@ module.exports = {
   // Returns true if obtaining a specific food places the snake in a corner
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, foodPath, bestFood, i) {
-    console.log("Test 1");
-
     var pathToFood = foodPath.slice(0);
-
-    
-    console.log("Inner pathToFood", pathToFood);
 
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
-    // Find path to next food.
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-    console.log("Test 2");
 
+    // Find path to next food.
     var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
-    console.log("Test 4");
-    // console.log(pathToFood);
-    // // console.log("PathToFood", foodPath);
 
-    // if (pathToFood) return false;
+    if (pathToFood) return false;
 
     return true;
   },
