@@ -49,7 +49,7 @@ module.exports = {
       console.log("Pre pathsToFood", pathsToFood[i]);
       // Will I be stuck in a corner?
       if (i + 1 < bestFood.length) {
-        console.log("Enough food")
+        console.log("Enough food");
         if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
           console.log("It's a trap!");
           i++;
@@ -98,26 +98,26 @@ module.exports = {
 
   // Returns true if obtaining a specific food places the snake in a corner
   // To do: This doesn't account for enemy movement.
-  isFoodTrap(TeamRocket, pathToFood, bestFood, i) {
+  isFoodTrap(TeamRocket, foodPath, bestFood, i) {
     console.log("Test 1");
-    // let pathToFood = foodPath;
-    // let pathToFood = _.cloneDeep(foodPath);
-    console.log(pathToFood);
 
+    var pathToFood = foodPath.slice(0);
+
+    
+    console.log("Inner pathToFood", pathToFood);
 
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
-    console.log("Test 2");
 
     // Find path to next food.
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-    console.log("Test 3");
+    console.log("Test 2");
 
     var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
-    console.log(pathToFood);
     console.log("Test 4");
-    // console.log("PathToFood", foodPath);
+    // console.log(pathToFood);
+    // // console.log("PathToFood", foodPath);
 
-    if (pathToFood) return false;
+    // if (pathToFood) return false;
 
     return true;
   },
