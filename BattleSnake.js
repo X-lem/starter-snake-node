@@ -85,27 +85,40 @@ module.exports = class BattleSnake {
     return [];
   }
   
-  longestPath(start) {
-    console.log("Longest Path.")
-    const queue = [_.cloneDeep(start)];
-    const visited = new WeakSet;
-    const closed = new WeakSet;
-    let cursor = 0;
-        
-    while (queue.length > cursor) {
-      console.log("Queue: ", queue);
-      const node = queue[cursor++];
-      closed.add(node);
-      console.log(node);
-      for (const next of this.immediateSpaces(node)) {
-        if (visited.has(next) || closed.has(next)) continue;
-        queue.push(next);
-        visited.add(next);
-        next.parent = node;
-      }
-    }
+  // Find the longest path between two coords
+  longestPath(start, end, dist = 0, maxDist = 0, visited = new WeakSet) {
     
-    return this.pullRoute(node);
+    // Break case
+    if(start.x === end.x && start.y === end.y)
+      return Math.max(dist, maxDist);
+
+    visited.add(start);
+
+    var obj, x = start.x, y = start.y;
+
+    // Up
+    obj = { x, y: y + 1 };
+    if (!visited.had(obj) && this.isTraversable(obj)) {
+      maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);
+    }
+    // Down
+    obj = { x, y: y + 1 };
+    if (!visited.had(obj) && this.isTraversable(obj)) {
+      maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
+    }
+    // Left
+    obj = { x: x - 1, y };
+    if (!visited.had(obj) && this.isTraversable(obj)) {
+      maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
+    }
+    // Right
+    obj = { x: x + 1, y };
+    if (!visited.had(obj) && this.isTraversable(obj)) {
+      maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);      
+    }
+
+
+    return maxDist;
   }
 
   getUnavailableSpaces(snakes) {

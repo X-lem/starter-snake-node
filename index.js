@@ -65,19 +65,11 @@ app.post('/moveT', (request, response) => {
 
   var TeamRocket, dir;
 
+  var bestFood = C.prioritizeFood(food);
+
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
-  var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
-  pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
-
-  TeamRocket.food.push({ x: 4, y: 4});
-  var start = { x: 4, y: 8, length: 5 };
   
-
-  if (_.find(TeamRocket.food, function(m) { return m.x === start.x && m.y === start.y })) {
-    console.log("food is here");
-  }
-  else
-    console.log("no food");
+  var dist = TeamRocket.longestPath(TeamRocket.head, bestFood[-1], );
 
   dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
