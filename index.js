@@ -52,7 +52,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/moveT', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -65,11 +65,11 @@ app.post('/moveT', (request, response) => {
 
   var TeamRocket, dir;
 
-  var bestFood = C.prioritizeFood(food);
-
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
-  
-  var dist = TeamRocket.longestPath(TeamRocket.head, bestFood[-1], );
+  var bestFood = C.prioritizeFood(TeamRocket.height, food);
+
+  var dist = TeamRocket.longestPath(TeamRocket.head, bestFood.pop());
+  console.log(dist);
 
   dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
@@ -82,7 +82,7 @@ app.post('/moveT', (request, response) => {
 })
 
 // moveMain
-app.post('/move', (request, response) => {
+app.post('/moveM', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;

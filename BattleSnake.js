@@ -87,7 +87,10 @@ module.exports = class BattleSnake {
   
   // Find the longest path between two coords
   longestPath(start, end, dist = 0, maxDist = 0, visited = new WeakSet) {
-    
+    console.log("longestPath", start, end, dist, maxDist, visited);
+
+
+
     // Break case
     if(start.x === end.x && start.y === end.y)
       return Math.max(dist, maxDist);
@@ -98,22 +101,23 @@ module.exports = class BattleSnake {
 
     // Up
     obj = { x, y: y + 1 };
-    if (!visited.had(obj) && this.isTraversable(obj)) {
+    console.log("obj", obj);
+    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);
     }
     // Down
     obj = { x, y: y + 1 };
-    if (!visited.had(obj) && this.isTraversable(obj)) {
+    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
     // Left
     obj = { x: x - 1, y };
-    if (!visited.had(obj) && this.isTraversable(obj)) {
+    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
     // Right
     obj = { x: x + 1, y };
-    if (!visited.had(obj) && this.isTraversable(obj)) {
+    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);      
     }
 
@@ -150,6 +154,7 @@ module.exports = class BattleSnake {
   }
 
   isTraversable(x, y) {
+    console.log("isTraversable")
     // Is the spot in bounds?
     if ((x >= 0 && x <= this.width) && (y >= 0 && y <= this.height)) {
       let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
