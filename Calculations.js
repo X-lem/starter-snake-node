@@ -46,7 +46,7 @@ module.exports = {
         continue;
       }
 
-      console.log("Pre pathsToFood", pathsToFood[i]);
+      // console.log("Pre pathsToFood", pathsToFood[i]);
       // Will I be stuck in a corner?
       if (i + 1 < bestFood.length) {
         console.log("Enough food");
@@ -57,7 +57,7 @@ module.exports = {
         }
       }
 
-      console.log("Post pathsToFood", pathsToFood[i]);
+      // console.log("Post pathsToFood", pathsToFood[i]);
 
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
@@ -99,14 +99,33 @@ module.exports = {
   // Returns true if obtaining a specific food places the snake in a corner
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, foodPath, bestFood, i) {
+    // Check to make sure foodPath is still good after this method.
+    // Check to make sure future snake has a head
+    console.log("bestFood", bestFood);
+
     var pathToFood = foodPath.slice(0);
+
+    
+    console.log("Path to food: ", pathToFood);
+
+    // Remove food at future head. Reprioritize food.
 
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
+    console.log("futureSnake", futureSnake.snake);
+
+    // Find new best food based on the head
+    var futureBestFood = bestFood.slice(0);
+    futureBestFood.splice(i, 1);
+    futureBestFood = this.prioritizeFood(futureSnake.head, futureBestFood);
+    console.log("futureBestFood", futureBestFood);
 
     // Find path to next food.
-    var pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[i + 1]);
+    pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, futureBestFood[0]);
+    console.log("Path to future food: ", pathToFood);
+
+    this.eternalLoop();
 
     if (pathToFood) return false;
 

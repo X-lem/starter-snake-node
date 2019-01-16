@@ -25,6 +25,7 @@ module.exports = class FutureBattleSnake {
   }
 
   breadthFirstSearch(start, food) {
+    console.log("Start", start, "food", food);
     const queue = [start];
     const visited = new WeakSet;
     const closed = new WeakSet;
@@ -33,8 +34,10 @@ module.exports = class FutureBattleSnake {
       const node = queue[cursor++];
       closed.add(node);
       if (node.x === food.x && node.y === food.y) {
+        // console.log("Found food");
         return this.pullRoute(node);
       }
+      // console.log("Node", node);
       for (const next of this.immediateSpaces(node)) {
         if (visited.has(next) || closed.has(next)) continue;
         queue.push(next);
