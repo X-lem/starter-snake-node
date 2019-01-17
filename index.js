@@ -69,9 +69,9 @@ app.post('/move', (request, response) => {
   var bestFood = C.prioritizeFood(TeamRocket.height, food);
 
   var dist = TeamRocket.longestPath(TeamRocket.head, bestFood.pop());
-  console.log(dist);
+  console.log("Distance: ", dist);
 
-  dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
+  dir = "up";
 
   // Response data
   const data = {

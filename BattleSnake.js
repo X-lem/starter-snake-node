@@ -86,41 +86,53 @@ module.exports = class BattleSnake {
   }
   
   // Find the longest path between two coords
-  longestPath(start, end, dist = 0, maxDist = 0, visited = new WeakSet) {
-    console.log("longestPath", start, end, dist, maxDist, visited);
-
+  longestPath(start, end, dist = 0, maxDist = 0, visited = []) {
+    // console.log("longestPath", start, end, dist, maxDist, visited);
 
 
     // Break case
     if(start.x === end.x && start.y === end.y)
       return Math.max(dist, maxDist);
 
-    visited.add(start);
+    visited.push(start);
 
     var obj, x = start.x, y = start.y;
 
+    console.log("test 1")
+
     // Up
-    obj = { x, y: y + 1 };
-    console.log("obj", obj);
-    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
+    obj = { x, y: y - 1 };
+    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);
     }
+
+    console.log("test 2")
     // Down
     obj = { x, y: y + 1 };
-    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
+    console.log("test 3");
     // Left
     obj = { x: x - 1, y };
-    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
     // Right
     obj = { x: x + 1, y };
-    if (!visited.has(obj) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);      
     }
 
+    console.log("Pre visited", visited)
+
+    // backtrack 
+    _.remove(visited, function(v) {
+      console.log(v.x, x, v.y, y);
+      return v.x === x && v.y === y;
+    });
+
+    console.log("Post visited", visited)
 
     return maxDist;
   }
@@ -132,13 +144,13 @@ module.exports = class BattleSnake {
       spaces.push(b);
     }
     return spaces;
-  }  
+  }
   
   immediateSpaces(node) {
     var x = node.x, y = node.y, spot, neighbors = [];
   
     // Up
-    spot = this.isTraversable(x, y - 1)
+    spot = this.isTraversable(x, y - 1);
     if (spot) neighbors.push(spot);
     // Down
     spot = this.isTraversable(x, y + 1);
@@ -154,7 +166,6 @@ module.exports = class BattleSnake {
   }
 
   isTraversable(x, y) {
-    console.log("isTraversable")
     // Is the spot in bounds?
     if ((x >= 0 && x <= this.width) && (y >= 0 && y <= this.height)) {
       let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
@@ -166,20 +177,6 @@ module.exports = class BattleSnake {
     
     return false;
   }
-
-  // isTraversable2(x, y) {
-  //   // Is the spot in bounds?
-  //   if ((x >= 0 && x <= this.width) && (y >= 0 && y <= this.height)) {
-  //     let spot = _.find(this.matrix, function(m) { return m.x === x && m.y === y});
-  //     console.log("spot", spot);
-  //     // If the spot is not taken return spot.
-  //     if (!spot.taken) {
-  //       return spot;
-  //     }
-  //   }
-    
-  //   return false;
-  // }
 
   // Looks at all the variables within object
   // If a match exists in array return true
