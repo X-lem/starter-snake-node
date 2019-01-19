@@ -11,7 +11,6 @@ const {
 const path = require('path')
 const _ = require('lodash');
 const C = require('./Calculations.js');
-// const TR = require('./TeamRocket.js');
 const BattleSnake = require('./BattleSnake.js');
 const FutureBattleSnake = require('./FutureBattleSnake.js');
 
@@ -62,7 +61,7 @@ app.post('/moveT', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
 
-  console.log(`--Move ${TRsnake.name}--`);
+  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
 
   var TeamRocket, futureSnake, dir, pathToFood, pathToFood2;
 
@@ -122,9 +121,8 @@ app.post('/move', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
   
-  console.log(`--Move ${TRsnake.name}--`);
+  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
   var TeamRocket, dir;
-
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 

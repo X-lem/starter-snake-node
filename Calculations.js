@@ -55,7 +55,11 @@ module.exports = {
           i++;
           continue;
         }
+        else {
+          console.log("Safe");
+        }
       }
+
 
       // console.log("Post pathsToFood", pathsToFood[i]);
 
@@ -99,37 +103,39 @@ module.exports = {
   // Returns true if obtaining a specific food places the snake in a corner
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, foodPath, bestFood, i) {
-    // Check to make sure foodPath is still good after this method.
-    // Check to make sure future snake has a head
-    console.log("bestFood", bestFood);
+    // console.log("bestFood", bestFood);
 
     var pathToFood = foodPath.slice(0);
 
     
-    console.log("Path to food: ", pathToFood);
+    // console.log("Path to food: ", pathToFood);
 
     // Remove food at future head. Reprioritize food.
 
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
 
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-    console.log("futureSnake", futureSnake.snake);
+    // console.log("futureSnake", futureSnake.snake);
 
-    // Find new best food based on the head
+    // Find the best food based on future snake
     var futureBestFood = bestFood.slice(0);
     futureBestFood.splice(i, 1);
     futureBestFood = this.prioritizeFood(futureSnake.head, futureBestFood);
-    console.log("futureBestFood", futureBestFood);
+    
+    // console.log("Furture unavailableSpaces", futureSnake.unavailableSpaces);
+    // console.log("Furture matrix", futureSnake.matrix);
+
+    // console.log("futureBestFood", futureBestFood);
 
     // Find path to next food.
     pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, futureBestFood[0]);
-    console.log("Path to future food: ", pathToFood);
+    // console.log("Path to future food: ", pathToFood);
 
-    this.eternalLoop();
+    if (pathToFood.length === 0) { 
+      return true;
+    }
 
-    if (pathToFood) return false;
-
-    return true;
+    return false;
   },
 
   // Returns true if it's completely safe to enter a space

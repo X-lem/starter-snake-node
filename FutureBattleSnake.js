@@ -100,7 +100,6 @@ module.exports = class FutureBattleSnake {
         return true;
       }
     }
-
     return false;
   }
 
