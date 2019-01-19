@@ -18,7 +18,7 @@
 // var food = [ { x: 2, y: 5 }, { x: 3, y: 5 }, { x: 8, y: 13 }, { x: 6, y: 1 }, { x: 1, y: 0 }];
 
   var start = {x:13, y:3 };
-  var food = [ { x: 2, y: 5 }, { x: 3, y: 5 }, { x: 8, y: 13 }, { x: 6, y: 1 }, { x: 1, y: 0 }]
+  var food = [ { x: 2, y: 5 }, { x: 3, y: 5 }, { x: 8, y: 13 }, { x: 6, y: 1 }, { x: 1, y: 0 }];
 
 
 // var list = C.breadthFirstSearch(start, end, unavailableSpaces, w, h);

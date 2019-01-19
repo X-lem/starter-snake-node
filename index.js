@@ -11,8 +11,8 @@ const {
 const path = require('path')
 const _ = require('lodash');
 const C = require('./Calculations.js');
-// const TR = require('./TeamRocket.js');
 const BattleSnake = require('./BattleSnake.js');
+const FutureBattleSnake = require('./FutureBattleSnake.js');
 
 
 // For deployment to Heroku, the port needs to be set using ENV, so
@@ -42,7 +42,7 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     name: 'Team Rocket',
-    color: '#B93021',   // #741ECD - Nice purple
+    color: '#bb3322',   // #741ECD - Nice purple
     // color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
     head: 'fang',
     tail: 'regular'
@@ -61,23 +61,45 @@ app.post('/moveT', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
 
-  console.log(`--Move ${TRsnake.name}--`);
+  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
 
-  var TeamRocket, dir;
+  var TeamRocket, futureSnake, dir, pathToFood, pathToFood2;
 
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
-  var bestFood = C.prioritizeFood(TeamRocket.snake[0], food);
-  pathsToFood = TeamRocket.breadthFirstSearch(TeamRocket.snake[0], bestFood[0]);
 
-  TeamRocket.food.push({ x: 4, y: 4});
-  var start = { x: 4, y: 8, length: 5 };
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
+  var bestFood = C.prioritizeFood(TeamRocket.head, food);
+
+  // console.log("Best food", bestFood[0], "Second best food", bestFood[1]);
+
+  pathToFood = TeamRocket.breadthFirstSearch(TeamRocket.head, bestFood[0]);
+  futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
+  futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
+
+  var newBestFood = bestFood.slice(0);
+  newBestFood.splice(0, 1);
+
+  
+  console.log("Best food", bestFood)
+  console.log("pre newBestFood", newBestFood)
+
+  newBestFood = C.prioritizeFood(futureSnake.head, newBestFood);
+
+  console.log("post newBestFood", newBestFood)
+
+  C.eternalLoop();
+
+  console.log("pathToFood", pathToFood);
+  
   
 
-  if (_.find(TeamRocket.food, function(m) { return m.x === start.x && m.y === start.y })) {
-    console.log("food is here");
-  }
-  else
-    console.log("no food");
+  console.log("futureSnake.snake", futureSnake.snake);
+  console.log("futureSnake.unavailable", futureSnake.unavailableSpaces);
+  pathToFood2 = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[1]);
+
+  console.log("future pathtofood", pathToFood2);
+
+
+
 
   dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
@@ -99,11 +121,10 @@ app.post('/move', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
   
-  console.log(`--Move ${TRsnake.name}--`);
-
+  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
   var TeamRocket, dir;
-      
-  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
+
+  TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
   dir = C.huntForFood(TeamRocket, food);
 
@@ -113,6 +134,7 @@ app.post('/move', (request, response) => {
   }
 
   // If all other algorithms fail, pick a direction
+  // TODO: See if I can follow my tail for a bit.
   if(!dir) {
     dir = C.lastResort(TeamRocket);
     if (!dir) console.log("No available direction.");
