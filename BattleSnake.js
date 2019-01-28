@@ -93,9 +93,7 @@ module.exports = class BattleSnake {
       return Math.max(dist, maxDist);
     }
     visited.push(start);
-
     var obj, x = start.x, y = start.y;
-
 
     // Up
     obj = { x, y: y - 1 };
