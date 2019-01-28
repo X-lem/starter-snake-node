@@ -68,9 +68,12 @@ app.post('/move', (request, response) => {
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes, food);
   var bestFood = C.prioritizeFood(TeamRocket.height, food);
 
-  var dist = TeamRocket.longestPath(TeamRocket.head, bestFood.pop());
+  const target = bestFood.pop();
+  var dist = TeamRocket.longestPath(TeamRocket.head, target);
+  console.log("Target Food: ", target);
   console.log("Distance: ", dist);
 
+  // C.eternalLoop();
   dir = "up";
 
   // Response data

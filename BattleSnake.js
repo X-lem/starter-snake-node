@@ -87,52 +87,42 @@ module.exports = class BattleSnake {
   
   // Find the longest path between two coords
   longestPath(start, end, dist = 0, maxDist = 0, visited = []) {
-    // console.log("longestPath", start, end, dist, maxDist, visited);
-
 
     // Break case
-    if(start.x === end.x && start.y === end.y)
+    if(start.x === end.x && start.y === end.y) {
       return Math.max(dist, maxDist);
-
+    }
     visited.push(start);
 
     var obj, x = start.x, y = start.y;
 
-    console.log("test 1")
 
     // Up
     obj = { x, y: y - 1 };
-    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(visited, function (v) { return v.x === obj.x && v.y === obj.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);
     }
-
-    console.log("test 2")
     // Down
     obj = { x, y: y + 1 };
-    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(visited, function (v) { return v.x === obj.x && v.y === obj.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
-    console.log("test 3");
     // Left
     obj = { x: x - 1, y };
-    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(visited, function (v) { return v.x === obj.x && v.y === obj.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);    
     }
     // Right
     obj = { x: x + 1, y };
-    if (!_.find(obj, function (o) { return o.x === start.x && o.y === start.y }) && this.isTraversable(obj.x, obj.y)) {
+    if (!_.find(visited, function (v) { return v.x === obj.x && v.y === obj.y }) && this.isTraversable(obj.x, obj.y)) {
       maxDist = this.longestPath(obj, end, dist + 1, maxDist, visited);      
     }
 
-    console.log("Pre visited", visited)
-
     // backtrack 
     _.remove(visited, function(v) {
-      console.log(v.x, x, v.y, y);
-      return v.x === x && v.y === y;
+      return v.x === start.x && v.y === start.y;
     });
 
-    console.log("Post visited", visited)
 
     return maxDist;
   }
