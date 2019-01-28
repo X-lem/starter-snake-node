@@ -138,6 +138,43 @@ module.exports = {
     return false;
   },
 
+  // Find snakes that are following their tail and surrounds them.
+  // Returns (x, y) coords of next step or false if there's no target.
+  snakeTrap(TeamRocket) {
+
+    const Target = this.findTarget(TeamRocket)
+    
+
+    // Can I surround them?
+
+    // Best path to sourround them?
+
+    return false;
+  },
+
+  findTarget(TeamRocket) {
+    // Is the head 1-2 moves away from their tail?
+
+    for (var i = 0; i < TeamRocket.enemies.length; i++) {
+      var enemy = TeamRocket.enemies.enemies[i];
+
+      // Am I at least twice their length?
+      if (TeamRocket.snake.length < enemy.snake.length * 2) continue;
+
+      // Does their body make a rectangle?
+
+        // Start with the head and neck.
+          // Is the third spot in the same x or y axis?
+            // If not, get turn index
+          // Turn twice.
+          // 2 after turn index should have the same x or y axis as head.
+          // Does that continue on?
+            // If there is a final turn does it have the same x y axis as the head?
+    }
+
+
+  },
+
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
     let Z = _.find(dangerZones, function(z) {

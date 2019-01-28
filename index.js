@@ -112,7 +112,7 @@ app.post('/moveT', (request, response) => {
 })
 
 // moveMain
-app.post('/move', (request, response) => {
+app.post('/moveM', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
