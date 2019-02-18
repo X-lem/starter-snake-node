@@ -41,11 +41,11 @@ app.post('/start', (request, response) => {
   
   // Response data
   const data = {
-    name: 'Team Rocket',
+    // name: 'Team Rocket',
     color: '#bb3322',   // #741ECD - Nice purple
     // color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
-    head: 'fang',
-    tail: 'regular'
+    headType: 'evil',
+    tailType: 'bolt'
   }
 
   return response.json(data)
@@ -67,41 +67,13 @@ app.post('/moveT', (request, response) => {
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  var bestFood = C.prioritizeFood(TeamRocket.head, food);
+  dir = C.follow(TeamRocket);
 
-  // console.log("Best food", bestFood[0], "Second best food", bestFood[1]);
+  if (dir) {
+    console.log("Dir", dir);
+  }
+  else console.log("Can't Follow");
 
-  pathToFood = TeamRocket.breadthFirstSearch(TeamRocket.head, bestFood[0]);
-  futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
-  futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-
-  var newBestFood = bestFood.slice(0);
-  newBestFood.splice(0, 1);
-
-  
-  console.log("Best food", bestFood)
-  console.log("pre newBestFood", newBestFood)
-
-  newBestFood = C.prioritizeFood(futureSnake.head, newBestFood);
-
-  console.log("post newBestFood", newBestFood)
-
-  C.eternalLoop();
-
-  console.log("pathToFood", pathToFood);
-  
-  
-
-  console.log("futureSnake.snake", futureSnake.snake);
-  console.log("futureSnake.unavailable", futureSnake.unavailableSpaces);
-  pathToFood2 = futureSnake.breadthFirstSearch(futureSnake.head, bestFood[1]);
-
-  console.log("future pathtofood", pathToFood2);
-
-
-
-
-  dir = C.directionToImmediatePath(TeamRocket.snake[0], pathsToFood[0]);
 
   // Response data
   const data = {
@@ -126,18 +98,27 @@ app.post('/move', (request, response) => {
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
-  dir = C.huntForFood(TeamRocket, food);
+  if (food[0]) {
+    dir = C.huntForFood(TeamRocket, food);
 
-  // Can't obtain food, find longest path
-  if (!dir) {
-    console.log("No food obtainable.");
+    // Can't obtain food, find longest path
+    if (!dir) {
+      console.log("No food obtainable.");
+    }
   }
+  else { console.log("No food to eat.") }
+ 
 
   // If all other algorithms fail, pick a direction
   // TODO: See if I can follow my tail for a bit.
   if(!dir) {
+    // Any open spot?
     dir = C.lastResort(TeamRocket);
-    if (!dir) console.log("No available direction.");
+    if (!dir) {
+      // Tail follow ?
+      dir = C.follow(TeamRocket);
+      if (!dir) console.log("No available direction.");
+    } 
   }
 
   // Response data

@@ -199,7 +199,6 @@ module.exports = {
 
   lastResort(TeamRocket) {
     console.log("lastResort");
-    console.log("TeamRocket head", TeamRocket.head);
     TeamRocket.buildMatrix();
     let spot, head = TeamRocket.head,
         x = TeamRocket.head.x, y = TeamRocket.head.y;
@@ -218,6 +217,34 @@ module.exports = {
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    
+    return false;
+  },
+
+  follow(TeamRocket) {
+    console.log("follow");
+    TeamRocket.buildMatrix();
+    let dir, head = TeamRocket.head
+
+    // Check if I can follow myself first
+    dir = this.directionToImmediatePath(head, TeamRocket.body[TeamRocket.body.length - 1]);    
+    if (dir) {
+      console.log('FOLLOWING TAIL: Self');
+      console.log("head: ", head, " Tail: ", tail);
+      return dir;
+    }
+    // Then check enemies
+    for (var i = 0; i < TeamRocket.enemies.length; i++) {
+      var enemy = TeamRocket.enemies[i];
+      var tail = enemy.body[enemy.body.length - 1];
+
+      dir = this.directionToImmediatePath(head, tail);
+      if (dir) {
+        console.log('FOLLOWING TAIL: Enemy');
+        console.log("head: ", head, " Tail: ", tail);
+        return dir;
+       }
+    }
+
     return false;
   },
   
