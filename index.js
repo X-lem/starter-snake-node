@@ -42,8 +42,8 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     // name: 'Team Rocket',
-    color: '#bb3322',   // #741ECD - Nice purple
-    // color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+    // color: '#bb3322',   // #741ECD - Nice purple
+    color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
     headType: 'evil',
     tailType: 'bolt'
   }
@@ -52,7 +52,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/moveT', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -61,13 +61,16 @@ app.post('/moveT', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
 
-  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
+  console.log(`--Turn ${request.body.turn} ${TRsnake.name}--`);
 
   var TeamRocket, futureSnake, dir, pathToFood, pathToFood2;
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  dir = C.follow(TeamRocket);
+
+  console.log(TeamRocket.snake);
+  if (request.body.turn > 0)
+    dir = C.huntForFood(TeamRocket, food);
 
   if (dir) {
     console.log("Dir", dir);
@@ -84,7 +87,7 @@ app.post('/moveT', (request, response) => {
 })
 
 // moveMain
-app.post('/move', (request, response) => {
+app.post('/moveM', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -93,11 +96,12 @@ app.post('/move', (request, response) => {
   const TRsnake = request.body.you;
   const food = board.food;
   
-  console.log(`--Move ${request.body.turn} ${TRsnake.name}--`);
+  console.log(`--Turn ${request.body.turn} ${TRsnake.name}--`);
   var TeamRocket, dir;
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
 
+  // Find closest food
   if (food[0]) {
     dir = C.huntForFood(TeamRocket, food);
 
@@ -107,16 +111,20 @@ app.post('/move', (request, response) => {
     }
   }
   else { console.log("No food to eat.") }
+
+
+  // Follow tail
+  if (dir)
  
 
   // If all other algorithms fail, pick a direction
   // TODO: See if I can follow my tail for a bit.
   if(!dir) {
     // Any open spot?
-    dir = C.lastResort(TeamRocket);
+    dir = C.follow(TeamRocket);
     if (!dir) {
       // Tail follow ?
-      dir = C.follow(TeamRocket);
+      dir = C.lastResort(TeamRocket);
       if (!dir) console.log("No available direction.");
     } 
   }

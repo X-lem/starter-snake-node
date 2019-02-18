@@ -82,6 +82,35 @@ module.exports = {
     return false;
   },
 
+  // Finds shortest path to tail.
+  // If no path is found find to tail - 1
+  // And so on
+  huntForTail(TeamRocket) {
+    console.log("huntForTail");
+    var length = TeamRocket.snake.length,
+        tail, path, dir;
+
+    console.log("length", length);
+    for (var i = 1; i < length; i++) {
+      TeamRocket.buildMatrix();
+
+      tail = TeamRocket.snake[length - i];
+
+      console.log("head ", TeamRocket.head, " tail", tail);
+
+      path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail);
+
+      console.log("path", path);
+      if (path.length > 0) {
+        dir = this.directionToImmediatePath(TeamRocket.head, path[0]);
+        if (dir) return dir;
+      }
+      else console.log("no possible path");
+    }
+
+    return false;
+  },
+
   // Checks for an alternate route to the food
   // Returns false otherwise
   // let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
@@ -140,9 +169,14 @@ module.exports = {
 
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
+    console.log("isSpotSafe");
+    console.log("dangerZones", dangerZones);
+
     let Z = _.find(dangerZones, function(z) {
       return spot.x === z.x && spot.y === z.y
     });
+
+    console.log("Z", Z);
     
     if (Z && Z.length >= myLength) {
       return false;
