@@ -92,18 +92,23 @@ module.exports = {
 
     console.log("length", length);
     for (var i = 1; i < length; i++) {
+      console.log("**************************");
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
 
       console.log("head ", TeamRocket.head, " tail", tail);
 
+      // Allow tail
+      let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y});
+      spot.taken = false;
+
       path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail);
 
       console.log("path", path);
       if (path.length > 0) {
         dir = this.directionToImmediatePath(TeamRocket.head, path[0]);
-        if (dir) return dir;
+        // if (dir) return dir;
       }
       else console.log("no possible path");
     }

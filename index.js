@@ -67,20 +67,13 @@ app.post('/move', (request, response) => {
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-
-  console.log(TeamRocket.snake);
-  if (request.body.turn > 0)
-    dir = C.huntForFood(TeamRocket, food);
-
-  if (dir) {
-    console.log("Dir", dir);
-  }
-  else console.log("Can't Follow");
+  Console.log(TeamRocket);
+  var stuff = TeamRocket.huntForTail(TeamRocket);
 
 
   // Response data
   const data = {
-    move: dir
+    move: "right"
   }
 
   return response.json(data);

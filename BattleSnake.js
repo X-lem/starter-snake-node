@@ -63,8 +63,7 @@ module.exports = class BattleSnake {
   }
 
   breadthFirstSearch(start, food) {
-    console.log("BFS");
-    console.log(start, food)
+    console.log("Start/food", start, food)
     const queue = [start];
     const visited = new WeakSet;
     const closed = new WeakSet;
