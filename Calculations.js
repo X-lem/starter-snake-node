@@ -39,29 +39,20 @@ module.exports = {
       }
 
       // Will I die via collistion? If so try taking another route
-      // && _.find(TeamRocket.food, function(f) { return f.x === pathsToFood[i][0].x && f.y === pathsToFood[i][0].y })
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
         console.log("Spot isn't safe!");
         i++;
         continue;
       }
 
-      // console.log("Pre pathsToFood", pathsToFood[i]);
       // Will I be stuck in a corner?
       if (i + 1 < bestFood.length) {
-        console.log("Enough food");
         if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
           console.log("It's a trap!");
           i++;
           continue;
         }
-        else {
-          console.log("Safe");
-        }
       }
-
-
-      // console.log("Post pathsToFood", pathsToFood[i]);
 
       dir = this.directionToImmediatePath(TeamRocket.head, pathsToFood[i][0]);
       
@@ -100,7 +91,7 @@ module.exports = {
       console.log("head", TeamRocket.head, "tail", tail);
 
       // Allow snake part to be reached
-      let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y});
+      let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y });
       spot.taken = false;
 
       // Create an invisble wall between the two nodes so that snake can't turn back on itself.
@@ -168,7 +159,7 @@ module.exports = {
     pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, futureBestFood[0]);
     // console.log("Path to future food: ", pathToFood);
 
-    if (pathToFood.length === 0) { 
+    if (pathToFood.length === 0) {
       return true;
     }
 

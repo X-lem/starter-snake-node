@@ -99,7 +99,7 @@ app.post('/moveM', (request, response) => {
 
     // Can't obtain food, find longest path
     if (!dir) {
-      console.log("No food obtainable.");
+      console.log("No food reachable.");
     }
   }
   else { console.log("No food to eat.") }
@@ -118,7 +118,7 @@ app.post('/moveM', (request, response) => {
       // Tail follow ?
       dir = C.lastResort(TeamRocket);
       if (!dir) console.log("No available direction.");
-    } 
+    }
   }
 
   // Response data
