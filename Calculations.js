@@ -38,7 +38,8 @@ module.exports = {
         continue;
       }
 
-      // Will I die via collistion? If so try taking another route
+      // Will I die via collistion?
+      // TODO: If so try taking another route
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
         console.log("Spot isn't safe!");
         i++;
