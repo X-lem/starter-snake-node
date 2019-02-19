@@ -63,12 +63,11 @@ app.post('/move', (request, response) => {
 
   console.log(`--Turn ${request.body.turn} ${TRsnake.name}--`);
 
-  var TeamRocket, futureSnake, dir, pathToFood, pathToFood2;
+  var TeamRocket, futureSnake, dir, pathToFood;
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  Console.log(TeamRocket);
-  var stuff = TeamRocket.huntForTail(TeamRocket);
+  var stuff = C.huntForTail(TeamRocket);
 
 
   // Response data

@@ -62,8 +62,9 @@ module.exports = class BattleSnake {
     });
   }
 
-  breadthFirstSearch(start, food) {
-    console.log("Start/food", start, food)
+  // invisibleWall is two side by side nodes that can't be traversed.
+  // This keeps the snake from going backwards into itself.
+  breadthFirstSearch(start, food, invisibleWall = null) {
     const queue = [start];
     const visited = new WeakSet;
     const closed = new WeakSet;
@@ -76,6 +77,8 @@ module.exports = class BattleSnake {
       }
       for (const next of this.immediateSpaces(node)) {
         if (visited.has(next) || closed.has(next)) continue;
+        if (invisibleWall != null && this.isInvisibleWall(node, next, invisibleWall)) continue;
+
         queue.push(next);
         visited.add(next);
         next.parent = node;
@@ -83,6 +86,20 @@ module.exports = class BattleSnake {
     }
     
     return [];
+  }
+
+  isInvisibleWall(node, next, invisibleWall) {
+    let L = _.find(invisibleWall, function(w) {
+      return w.x === node.x && w.y === node.y
+    });
+
+    let R = _.find(invisibleWall, function(w) {
+      return w.x === next.x && w.y === next.y
+    });
+
+    if (L && R) return true;
+
+    return false;
   }
   
   longestPath(start) {

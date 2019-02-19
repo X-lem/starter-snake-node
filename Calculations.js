@@ -97,20 +97,23 @@ module.exports = {
 
       tail = TeamRocket.snake[length - i];
 
-      console.log("head ", TeamRocket.head, " tail", tail);
+      console.log("head", TeamRocket.head, "tail", tail);
 
-      // Allow tail
+      // Allow snake part to be reached
       let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y});
       spot.taken = false;
 
-      path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail);
+      // Create an invisble wall between the two nodes so that snake can't turn back on itself.
+      var invisibleWall = [TeamRocket.head, tail];
+
+      path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail, invisibleWall);
 
       console.log("path", path);
       if (path.length > 0) {
         dir = this.directionToImmediatePath(TeamRocket.head, path[0]);
         // if (dir) return dir;
+
       }
-      else console.log("no possible path");
     }
 
     return false;
@@ -174,15 +177,10 @@ module.exports = {
 
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
-    console.log("isSpotSafe");
-    console.log("dangerZones", dangerZones);
-
     let Z = _.find(dangerZones, function(z) {
       return spot.x === z.x && spot.y === z.y
     });
 
-    console.log("Z", Z);
-    
     if (Z && Z.length >= myLength) {
       return false;
     }
