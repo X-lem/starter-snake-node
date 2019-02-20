@@ -206,32 +206,6 @@ module.exports = {
     return true;
   },
 
-  // Returns the xy coordinates of immediate spots a snake can take
-  // w = grid width; h = grid height
-  immediatePath(head, unavailableSpaces, w, h) {
-    var spots = new Array();
-
-    // Immediate spots to go
-    spots.push({ x: head.x + 1, y: head.y });
-    spots.push({ x: head.x, y: head.y + 1 });
-    spots.push({ x: head.x - 1, y: head.y });
-    spots.push({ x: head.x, y: head.y - 1 });
-
-    // Remove out of bounds
-    _.remove(spots, function(s) {
-      return s.x > w || s.x < 0 || s.y > h || s.y < 0;
-    });
-
-    // Remove unavailable spaces
-    unavailableSpaces.forEach((space) => {
-      _.remove(spots, function(s) {
-          return _.isEqual(s, space);
-      });
-    });
-
-    return spots;
-  },
-
   // Returns the string representation of the
   // direction to get to the immediate path.
   // Returns false if immediate path isn't next to head
