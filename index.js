@@ -111,7 +111,7 @@ app.post('/move', (request, response) => {
   // Follow tail
   if (!dir) {
     console.log("Following tail");
-    dir = C.huntForTail(TeamRocket);
+    dir = C.huntForTail(TeamRocket, request.body.turn);
   }
 
   // If all other algorithms fail, pick a direction

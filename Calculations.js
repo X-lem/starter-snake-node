@@ -77,7 +77,7 @@ module.exports = {
   // Finds shortest path to tail.
   // If no path is found find to tail - 1
   // And so on
-  huntForTail(TeamRocket) {
+  huntForTail(TeamRocket, turn) {
     var length = TeamRocket.snake.length,
         tail, path, dir;
 
@@ -91,7 +91,7 @@ module.exports = {
       spot.taken = false;
 
       // Create an invisble wall between the two nodes so that snake can't turn back on itself.
-      if (i > 1)
+      if (turn != 1)
         var invisibleWall = [TeamRocket.head, tail];
 
       path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail, invisibleWall);
@@ -131,6 +131,7 @@ module.exports = {
   alternateRoute(TeamRocket, dangerSpots, destination) {
     console.log("alternateRoute")
     console.log("dangerSpots", dangerSpots);
+    // Add danger spots to unavailableSpaces
     dangerSpots.forEach((spot) => {
       console.log("Spot", spot);
       if (spot.length >= TeamRocket.length){
@@ -140,12 +141,14 @@ module.exports = {
     });
     console.log("test 1")
     TeamRocket.buildMatrix();
-    console.log("test 2")
     var altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, destination);
-    console.log("test 3")
+
+    // Remove danger spots to unavailableSpaces
     dangerSpots.forEach((spot) => {
       _.pull(TeamRocket.unavailableSpaces, spot);
     });
+    
+    console.log("test 3")
 
     // Does route exist and is it safe?
     if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, TeamRocket.dangerZones)){
