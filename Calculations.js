@@ -41,7 +41,7 @@ module.exports = {
       // Will I die via collistion?
       // TODO: If so try taking another route
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
-        console.log("Spot isn't safe!");
+        console.log("Spot isn't safe!", pathsToFood[i][0]);
         i++;
         continue;
       }
@@ -78,49 +78,75 @@ module.exports = {
   // If no path is found find to tail - 1
   // And so on
   huntForTail(TeamRocket) {
-    console.log("huntForTail");
     var length = TeamRocket.snake.length,
         tail, path, dir;
 
-    console.log("length", length);
     for (var i = 1; i < length; i++) {
-      console.log("**************************");
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
-
-      console.log("head", TeamRocket.head, "tail", tail);
 
       // Allow snake part to be reached
       let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y });
       spot.taken = false;
 
       // Create an invisble wall between the two nodes so that snake can't turn back on itself.
-      var invisibleWall = [TeamRocket.head, tail];
+      if (i > 1)
+        var invisibleWall = [TeamRocket.head, tail];
 
       path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail, invisibleWall);
+      console.log("Follow tail path:", path);
 
-      console.log("path", path);
       if (path.length > 0) {
-        dir = this.directionToImmediatePath(TeamRocket.head, path[0]);
-        // if (dir) return dir;
+        if (!this.isSpotSafe(path[0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
+          console.log("Looking for alternate route");
 
+          var immediateDanger = [];
+
+          TeamRocket.dangerZones.forEach((D) => { 
+            var S = this.directionToImmediatePath(TeamRocket.head, D);
+            if (S) immediateDanger.push(D);
+          });
+
+          console.log("immediateDanger", immediateDanger);
+
+          path = this.alternateRoute(TeamRocket, immediateDanger, tail);
+          if (!path) {
+            console.log("No alt path found");
+            continue;
+          }
+        }
+
+
+        dir = this.directionToImmediatePath(TeamRocket.head, path[0]);
+        if (dir) return dir;
       }
     }
 
     return false;
   },
 
-  // Checks for an alternate route to the food
+  // Checks for an alternate route
   // Returns false otherwise
-  // let altRoute = this.alternateRoute(TeamRocket,bestFood[i], pathsToFood[i][0]);
-  alternateRoute(TeamRocket, food, dangerSpot) {
-    console.log("Danger: ", dangerSpot);
-    TeamRocket.unavailableSpaces.push(dangerSpot);
+  alternateRoute(TeamRocket, dangerSpots, destination) {
+    console.log("alternateRoute")
+    console.log("dangerSpots", dangerSpots);
+    dangerSpots.forEach((spot) => {
+      console.log("Spot", spot);
+      if (spot.length >= TeamRocket.length){
+        console.log("Spot", spot);
+        TeamRocket.unavailableSpaces.push(spot);
+      }
+    });
+    console.log("test 1")
     TeamRocket.buildMatrix();
-    console.log(TeamRocket.matrix);
-    let altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, food);
-    _.pull(TeamRocket.unavailableSpaces, dangerSpot);
+    console.log("test 2")
+    var altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, destination);
+    console.log("test 3")
+    dangerSpots.forEach((spot) => {
+      _.pull(TeamRocket.unavailableSpaces, spot);
+    });
+
     // Does route exist and is it safe?
     if (altRoute.length === 0 && this.isSpotSafe(TeamRocket.head, TeamRocket.snake.length, TeamRocket.dangerZones)){
       console.log("No alt route");
@@ -253,13 +279,16 @@ module.exports = {
     console.log("follow");
     TeamRocket.buildMatrix();
     let dir, head = TeamRocket.head
-
+    console.log("test 1")
     // Check if I can follow myself first
-    dir = this.directionToImmediatePath(head, TeamRocket.body[TeamRocket.body.length - 1]);    
+    dir = this.directionToImmediatePath(head, TeamRocket.snake[TeamRocket.snake.length - 1]);
     if (dir) {
       console.log('FOLLOWING TAIL: Self');
       console.log("head: ", head, " Tail: ", tail);
       return dir;
+    }
+    else {
+      console.log("Can't follow Self");
     }
     // Then check enemies
     for (var i = 0; i < TeamRocket.enemies.length; i++) {

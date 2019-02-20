@@ -52,7 +52,7 @@ app.post('/start', (request, response) => {
 })
 
 //moveTest
-app.post('/move', (request, response) => {
+app.post('/moveT', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -67,7 +67,10 @@ app.post('/move', (request, response) => {
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  var stuff = C.huntForTail(TeamRocket);
+  console.log("DZ", TeamRocket.dangerZones);
+  if (request.body.turn > 1)
+    C.eternalLoop();
+  // var stuff = C.huntForTail(TeamRocket);
 
 
   // Response data
@@ -79,7 +82,7 @@ app.post('/move', (request, response) => {
 })
 
 // moveMain
-app.post('/moveM', (request, response) => {
+app.post('/move', (request, response) => {
   const board = request.body.board;
 
   const snakes = board.snakes;
@@ -106,8 +109,10 @@ app.post('/moveM', (request, response) => {
 
 
   // Follow tail
-  if (dir)
- 
+  if (!dir) {
+    console.log("Following tail");
+    dir = C.huntForTail(TeamRocket);
+  }
 
   // If all other algorithms fail, pick a direction
   // TODO: See if I can follow my tail for a bit.
@@ -116,6 +121,7 @@ app.post('/moveM', (request, response) => {
     dir = C.follow(TeamRocket);
     if (!dir) {
       // Tail follow ?
+      console.log("Last resport");
       dir = C.lastResort(TeamRocket);
       if (!dir) console.log("No available direction.");
     }

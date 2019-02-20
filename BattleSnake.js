@@ -46,18 +46,20 @@ module.exports = class BattleSnake {
       let x = head.x, y = head.y;
 
       // Get the 4 spaces around the head that are open
+      // Don't add the neck
+
       // Up
       spot = this.isTraversable(x, y - 1);
-      if (spot) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
+      if (spot && !this.existsWithin(s.body, spot)) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
       // Down
       spot = this.isTraversable(x, y + 1);
-      if (spot) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
+      if (spot && !this.existsWithin(s.body, spot)) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
       // Left
       spot = this.isTraversable(x - 1, y);
-      if (spot) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
+      if (spot && !this.existsWithin(s.body, spot)) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
       // Right
       spot = this.isTraversable(x + 1, y);
-      if (spot) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
+      if (spot && !this.existsWithin(s.body, spot)) dangerZones.push({ x: spot.x, y: spot.y, length: s.body.length });
       
     });
   }
