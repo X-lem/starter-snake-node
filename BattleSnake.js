@@ -176,7 +176,7 @@ module.exports = class BattleSnake {
   // Otherwise return false
   existsWithin(array, object) {
     for (var i = 0; i < array.length; i++) {
-      if(_.isEqual(array[i], object)){
+      if(_.isEqual(array[i], object)) {
         return true;
       }
     }

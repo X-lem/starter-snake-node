@@ -44,6 +44,14 @@ module.exports = {
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
         console.log("Spot isn't safe!", pathsToFood[i][0]);
 
+        // If food spot is the danger spot, skip
+        if (_.isEqual(pathsToFood[i][0], bestFood[i])) {
+          console.log("The danger spot equals food.");
+          i++;
+          continue;
+        }
+
+        // See if there is an alternate route to food
         var immediateDanger = [];
 
         TeamRocket.dangerZones.forEach((D) => {
@@ -55,7 +63,6 @@ module.exports = {
         if (!pathsToFood[i]) {
           console.log("No alt food path found");
           i++;
-
           continue;
         }
       }
@@ -186,7 +193,7 @@ module.exports = {
       _.pull(TeamRocket.unavailableSpaces, spot);
     });
 
-    this.eternalLoop();
+    // this.eternalLoop();
     // Does route exist and is it safe?
     if (altRoute.length === 0) {
       console.log("No alt route");
@@ -273,6 +280,28 @@ module.exports = {
     let spot, head = TeamRocket.head,
         x = TeamRocket.head.x, y = TeamRocket.head.y;
 
+
+    // If there's an option without entering a danger zone
+    // Up
+
+    // ToDo: Double check this
+    if (false) {
+    spot = TeamRocket.isTraversable(x, y - 1);
+    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
+    // Down
+    spot = TeamRocket.isTraversable(x, y + 1);
+    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
+    // Left
+    spot = TeamRocket.isTraversable(x - 1, y);
+    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
+    // Right
+    spot = TeamRocket.isTraversable(x + 1, y);
+    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
+    }
+
+
+    // Only danger zones left... Yolo
+    console.log("Yolo");
     // Up
     spot = TeamRocket.isTraversable(x, y - 1);
     if (spot) return this.directionToImmediatePath(head, spot);
@@ -287,36 +316,6 @@ module.exports = {
     if (spot) return this.directionToImmediatePath(head, spot);
 
     // No available spot to go.    
-    return false;
-  },
-
-  follow(TeamRocket) {
-    console.log("Last Resport - follow");
-    TeamRocket.buildMatrix();
-    let dir, head = TeamRocket.head
-    // Check if I can follow myself first
-    dir = this.directionToImmediatePath(head, TeamRocket.snake[TeamRocket.snake.length - 1]);
-    if (dir) {
-      console.log('FOLLOWING TAIL: Self');
-      console.log("head: ", head, " Tail: ", tail);
-      return dir;
-    }
-    else {
-      console.log("Can't follow Self");
-    }
-    // Then check enemies
-    for (var i = 0; i < TeamRocket.enemies.length; i++) {
-      var enemy = TeamRocket.enemies[i];
-      var tail = enemy.body[enemy.body.length - 1];
-
-      dir = this.directionToImmediatePath(head, tail);
-      if (dir) {
-        console.log('FOLLOWING TAIL: Enemy');
-        console.log("head: ", head, " Tail: ", tail);
-        return dir;
-       }
-    }
-
     return false;
   },
   
