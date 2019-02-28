@@ -20,7 +20,7 @@ module.exports = {
   // Returns next movement in ideal path to obtain food.
   // Otherwise returns false
   huntForFood(TeamRocket, food) {
-    console.log("huntForFood");
+    console.log("Hunt For Food");
     var dir, bestFood, pathsToFood = [],
       foundFood = false, huntForFood = true, i = 0;
 
@@ -34,17 +34,30 @@ module.exports = {
 
       // Is the food obtainable?
       if (pathsToFood[i].length === 0) {
-        console.log("Can't reach food.");
+        console.log("Can't reach food:", bestFood[i]);
         i++;
         continue;
       }
 
       // Will I die via collistion?
-      // TODO: If so try taking another route
+      // TODO: Test find alternate path
       if (!this.isSpotSafe(pathsToFood[i][0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
         console.log("Spot isn't safe!", pathsToFood[i][0]);
-        i++;
-        continue;
+
+        var immediateDanger = [];
+
+        TeamRocket.dangerZones.forEach((D) => {
+          var S = this.directionToImmediatePath(TeamRocket.head, D);
+          if (S) immediateDanger.push(D);
+        });
+
+        pathsToFood[i] = this.alternateRoute(TeamRocket, immediateDanger, bestFood[i]);
+        if (!pathsToFood[i]) {
+          console.log("No alt food path found");
+          i++;
+
+          continue;
+        }
       }
 
       // Will I be stuck in a corner?
@@ -79,6 +92,7 @@ module.exports = {
   // If no path is found find to tail - 1
   // And so on
   huntForTail(TeamRocket, turn) {
+    console.log("Hunt For Tail");
     var length = TeamRocket.snake.length,
         invisibleWall, tail, path, dir;
 
@@ -87,11 +101,11 @@ module.exports = {
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
-      console.log("Snake", TeamRocket.snake);
+      // console.log("Snake", TeamRocket.snake);
       console.log("hunting tail part", i, tail);
 
       // Allow snake part to be reached
-      let spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y });
+      var spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y });
       spot.taken = false;
 
       // Create an invisble wall between the two nodes
@@ -114,11 +128,9 @@ module.exports = {
             if (S) immediateDanger.push(D);
           });
 
-          console.log("immediateDanger", immediateDanger);
-
           path = this.alternateRoute(TeamRocket, immediateDanger, tail, invisibleWall);
           if (!path) {
-            console.log("No alt path found");
+            console.log("No alt tail path found");
             continue;
           }
         }
@@ -130,6 +142,8 @@ module.exports = {
           return dir;
         }
       }
+
+      spot.taken = true;
     }
 
     return false;
@@ -137,26 +151,32 @@ module.exports = {
 
   // Checks for an alternate route
   // Returns false otherwise
+  // Note: dangerSpots does not have to be the same as TeamRocket.dangerZones
   alternateRoute(TeamRocket, dangerSpots, destination, invisibleWall = null) {
     console.log("Looking for alternate route");
     console.log("dangerSpots", dangerSpots);
     var addedDangers = [];
+    TeamRocket.buildMatrix();
+
+    console.log("TeamRocket unavailableSpaces: ", TeamRocket.unavailableSpaces);
 
     // Add danger spots to unavailableSpaces
     dangerSpots.forEach((spot) => {
-      if (spot.length >= TeamRocket.snake.length){
+      if (spot.length >= TeamRocket.snake.length) {
         var obj = { x: spot.x, y: spot.y }
         addedDangers.push(obj);
         TeamRocket.unavailableSpaces.push(obj);
       }
     });
+    TeamRocket.buildMatrix();
 
-    console.log("Head and Tail", TeamRocket.head, destination);
+    //console.log("Head and Tail", TeamRocket.head, destination);
+    console.log("TeamRocket matrix: ", TeamRocket.matrix);
+    console.log("destination", destination);
+
+
 
     // Find alternative route
-    TeamRocket.buildMatrix();
-    console.log("TeamRocket.matrix", TeamRocket.matrix)
-
     // ToDo: This isn't working...??????
     var altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, destination, invisibleWall);
     console.log("altRoute", altRoute);
@@ -166,8 +186,9 @@ module.exports = {
       _.pull(TeamRocket.unavailableSpaces, spot);
     });
 
+    this.eternalLoop();
     // Does route exist and is it safe?
-    if (altRoute.length === 0){
+    if (altRoute.length === 0) {
       console.log("No alt route");
       return false;
     }
@@ -186,8 +207,8 @@ module.exports = {
 
     // Remove food at future head. Reprioritize food.
 
+    // Create snake in future position
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
-
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
     // console.log("futureSnake", futureSnake.snake);
 
@@ -245,8 +266,9 @@ module.exports = {
     return false;
   },
 
+  // ToDo: See if there's a spot that is absolutely free.
   lastResort(TeamRocket) {
-    console.log("lastResort");
+    console.log("Last Resport");
     TeamRocket.buildMatrix();
     let spot, head = TeamRocket.head,
         x = TeamRocket.head.x, y = TeamRocket.head.y;
@@ -269,7 +291,7 @@ module.exports = {
   },
 
   follow(TeamRocket) {
-    console.log("follow");
+    console.log("Last Resport - follow");
     TeamRocket.buildMatrix();
     let dir, head = TeamRocket.head
     // Check if I can follow myself first

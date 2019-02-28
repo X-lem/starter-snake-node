@@ -67,15 +67,21 @@ app.post('/moveT', (request, response) => {
 
 
   TeamRocket = new BattleSnake(width, height, TRsnake.id, snakes);
-  console.log("DZ", TeamRocket.dangerZones);
-  if (request.body.turn > 1)
-    C.eternalLoop();
-  // var stuff = C.huntForTail(TeamRocket);
 
+  console.log("TeamRocket.snake", TeamRocket.snake);
 
+  var danger = [ { x: food[0].x, y: food[0].y + 1, length: 10 } ];
+
+  console.log(food[0], danger);
+
+  var path = C.alternateRoute(TeamRocket, danger, food[0]);
+
+  var dir = C.directionToImmediatePath(TeamRocket.head, path[0]);
+
+  console.log("Final direction:", dir);
   // Response data
   const data = {
-    move: "right"
+    move: dir
   }
 
   return response.json(data);
@@ -110,21 +116,13 @@ app.post('/move', (request, response) => {
 
   // Follow tail
   if (!dir) {
-    console.log("Following tail");
     dir = C.huntForTail(TeamRocket, request.body.turn);
   }
 
   // If all other algorithms fail, pick a direction
-  // TODO: See if I can follow my tail for a bit.
   if(!dir) {
-    // Any open spot?
-    dir = C.follow(TeamRocket);
-    if (!dir) {
-      // Tail follow ?
-      console.log("Last resport");
-      dir = C.lastResort(TeamRocket);
-      if (!dir) console.log("No available direction.");
-    }
+    dir = C.lastResort(TeamRocket);
+    if (!dir) console.log("No available direction.");
   }
 
   console.log("Final direction:", dir);
@@ -138,6 +136,7 @@ app.post('/move', (request, response) => {
 
 app.post('/end', (request, response) => {
   console.log("xxxx", request.body.you.name, "xxxx");
+  console.log("Team Rocket is blasting off again...");
   // NOTE: Do something to end the game
 })
 
