@@ -69,10 +69,14 @@ module.exports = {
 
       // Will I be stuck in a corner?
       if (i + 1 < bestFood.length) {
+        // Can I get another food?
         if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
-          console.log("It's a trap!");
-          i++;
-          continue;
+          // Can I follow my tail
+          if (this.isFoodTrap2(TeamRocket, pathsToFood[i])) {
+            console.log("It's a trap!");
+            i++;
+            continue;
+          }
         }
       }
 
@@ -110,8 +114,6 @@ module.exports = {
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
-      // console.log("Snake", TeamRocket.snake);
-      console.log("hunting tail part", i, tail);
 
       // Allow snake part to be reached
       var spot = _.find(TeamRocket.matrix, function(m) { return m.x === tail.x && m.y === tail.y });
@@ -124,7 +126,6 @@ module.exports = {
         invisibleWall = [TeamRocket.head, tail];
 
       path = TeamRocket.breadthFirstSearch(TeamRocket.head, tail, invisibleWall);
-      console.log("Follow tail path:", path, "index", i);
 
       if (path.length > 0) {
         if (!this.isSpotSafe(path[0], TeamRocket.snake.length, TeamRocket.dangerZones)) {
@@ -163,11 +164,8 @@ module.exports = {
   // Note: dangerSpots does not have to be the same as TeamRocket.dangerZones
   alternateRoute(TeamRocket, dangerSpots, destination, invisibleWall = null) {
     console.log("Looking for alternate route");
-    console.log("dangerSpots", dangerSpots);
     var addedDangers = [];
     TeamRocket.buildMatrix();
-
-    // console.log("TeamRocket unavailableSpaces: ", TeamRocket.unavailableSpaces);
 
     // Add danger spots to unavailableSpaces
     dangerSpots.forEach((spot) => {
@@ -179,15 +177,9 @@ module.exports = {
     });
     TeamRocket.buildMatrix();
 
-    //console.log("Head and Tail", TeamRocket.head, destination);
-    // console.log("TeamRocket matrix: ", TeamRocket.matrix);
-    console.log("destination", destination);
-
 
     // Find alternative route
-    // ToDo: This isn't working...??????
     var altRoute = TeamRocket.breadthFirstSearch(TeamRocket.head, destination, invisibleWall);
-    console.log("altRoute", altRoute);
 
     // Remove danger spots to unavailableSpaces
     addedDangers.forEach((spot) => {
@@ -205,39 +197,49 @@ module.exports = {
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, foodPath, bestFood, i) {
     console.log("Is food trap?");
-    // console.log("bestFood", bestFood);
 
     var pathToFood = foodPath.slice(0);
 
-    
-    // console.log("Path to food: ", pathToFood);
-
     // Remove food at future head. Reprioritize food.
-
     // Create snake in future position
     var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
     futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
-    // console.log("futureSnake", futureSnake.snake);
 
     // Find the best food based on future snake
     var futureBestFood = bestFood.slice(0);
     futureBestFood.splice(i, 1);
     futureBestFood = this.prioritizeFood(futureSnake.head, futureBestFood);
     
-    // console.log("Furture unavailableSpaces", futureSnake.unavailableSpaces);
-    // console.log("Furture matrix", futureSnake.matrix);
-
-    // console.log("futureBestFood", futureBestFood);
 
     // Find path to next food.
     pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, futureBestFood[0]);
-    // console.log("Path to future food: ", pathToFood);
 
     if (pathToFood.length === 0) {
       return true;
     }
 
     return false;
+  },
+
+  // Can I get to my tail?
+  isFoodTrap2(TeamRocket, foodPath) {
+    console.log("Can I get to my tail?");
+
+    var pathToFood = foodPath.slice(0);
+
+    // Remove food at future head. Reprioritize food.
+    // Create snake in future position
+    var futureSnake = pathToFood.reverse().concat(TeamRocket.snake).slice(0, TeamRocket.snake.length + 1);
+    futureSnake = new FutureBattleSnake(TeamRocket, futureSnake);
+
+    // Find path to next food.
+    pathToFood = futureSnake.breadthFirstSearch(futureSnake.head, futureSnake.snake[futureSnake.snake.length - 1]);
+    
+    if (pathToFood.length === 0) {
+      return true;
+    }
+
+    return false;    
   },
 
   // Returns true if it's completely safe to enter a space
