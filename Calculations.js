@@ -98,6 +98,8 @@ module.exports = {
   // Finds shortest path to tail.
   // If no path is found find to tail - 1
   // And so on
+
+  // ToDo: If two segments are in the tail can't immediatly follow tail.
   huntForTail(TeamRocket, turn) {
     console.log("Hunt For Tail");
     var length = TeamRocket.snake.length,
@@ -165,7 +167,7 @@ module.exports = {
     var addedDangers = [];
     TeamRocket.buildMatrix();
 
-    console.log("TeamRocket unavailableSpaces: ", TeamRocket.unavailableSpaces);
+    // console.log("TeamRocket unavailableSpaces: ", TeamRocket.unavailableSpaces);
 
     // Add danger spots to unavailableSpaces
     dangerSpots.forEach((spot) => {
@@ -178,9 +180,8 @@ module.exports = {
     TeamRocket.buildMatrix();
 
     //console.log("Head and Tail", TeamRocket.head, destination);
-    console.log("TeamRocket matrix: ", TeamRocket.matrix);
+    // console.log("TeamRocket matrix: ", TeamRocket.matrix);
     console.log("destination", destination);
-
 
 
     // Find alternative route
@@ -193,8 +194,6 @@ module.exports = {
       _.pull(TeamRocket.unavailableSpaces, spot);
     });
 
-    // this.eternalLoop();
-    // Does route exist and is it safe?
     if (altRoute.length === 0) {
       console.log("No alt route");
       return false;
@@ -205,6 +204,7 @@ module.exports = {
   // Returns true if obtaining a specific food places the snake in a corner
   // To do: This doesn't account for enemy movement.
   isFoodTrap(TeamRocket, foodPath, bestFood, i) {
+    console.log("Is food trap?");
     // console.log("bestFood", bestFood);
 
     var pathToFood = foodPath.slice(0);
@@ -242,6 +242,7 @@ module.exports = {
 
   // Returns true if it's completely safe to enter a space
   isSpotSafe(spot, myLength, dangerZones) {
+    console.log("Is spot safe?");
     let Z = _.find(dangerZones, function(z) {
       return spot.x === z.x && spot.y === z.y
     });
@@ -273,6 +274,26 @@ module.exports = {
     return false;
   },
 
+    followEnemy(TeamRocket) {
+    console.log("Follow Enemy");
+    TeamRocket.buildMatrix();
+    let dir, head = TeamRocket.head
+
+    for (var i = 0; i < TeamRocket.enemies.length; i++) {
+      var enemy = TeamRocket.enemies[i];
+      var tail = enemy.body[enemy.body.length - 1];
+
+      dir = this.directionToImmediatePath(head, tail);
+      if (dir) {
+        console.log('FOLLOWING TAIL: Enemy');
+        console.log("head: ", head, " Tail: ", tail);
+        return dir;
+       }
+    }
+
+    return false;
+  },
+
   // ToDo: See if there's a spot that is absolutely free.
   lastResort(TeamRocket) {
     console.log("Last Resport");
@@ -280,27 +301,6 @@ module.exports = {
     let spot, head = TeamRocket.head,
         x = TeamRocket.head.x, y = TeamRocket.head.y;
 
-
-    // If there's an option without entering a danger zone
-    // Up
-
-    // ToDo: Double check this
-    if (false) {
-    spot = TeamRocket.isTraversable(x, y - 1);
-    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
-    // Down
-    spot = TeamRocket.isTraversable(x, y + 1);
-    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
-    // Left
-    spot = TeamRocket.isTraversable(x - 1, y);
-    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
-    // Right
-    spot = TeamRocket.isTraversable(x + 1, y);
-    if (spot && !TeamRocket.existsWithin(TeamRocket.dangerZones, spot)) return this.directionToImmediatePath(head, spot);
-    }
-
-
-    // Only danger zones left... Yolo
     console.log("Yolo");
     // Up
     spot = TeamRocket.isTraversable(x, y - 1);

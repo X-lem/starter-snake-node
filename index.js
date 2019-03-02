@@ -121,8 +121,11 @@ app.post('/move', (request, response) => {
 
   // If all other algorithms fail, pick a direction
   if(!dir) {
-    dir = C.lastResort(TeamRocket);
-    if (!dir) console.log("No available direction.");
+    dir = C.followEnemy(TeamRocket)
+    if (!dir) {
+      dir = C.lastResort(TeamRocket);
+      if (!dir) console.log("No available direction.");
+    }
   }
 
   console.log("Final direction:", dir);

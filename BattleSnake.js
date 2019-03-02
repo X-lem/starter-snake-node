@@ -72,11 +72,9 @@ module.exports = class BattleSnake {
     const closed = new WeakSet;
     let cursor = 0;
     while (queue.length > cursor) {
-      // console.log("Queue", queue);
       const node = queue[cursor++];
       closed.add(node);
       if (node.x === food.x && node.y === food.y) {
-        // console.log("Destination found!");
         return this.pullRoute(node);
       }
       for (const next of this.immediateSpaces(node)) {
