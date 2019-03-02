@@ -33,6 +33,11 @@ app.get('/', function(req, res) {
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
 
+app.post('/ping', (request, response) => {
+  // Used for checking if this snake is still alive.
+  return response.json({});
+})
+
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
@@ -121,7 +126,7 @@ app.post('/move', (request, response) => {
 
   // If all other algorithms fail, pick a direction
   if(!dir) {
-    dir = C.followEnemy(TeamRocket)
+    dir = C.followEnemy(TeamRocket);
     if (!dir) {
       dir = C.lastResort(TeamRocket);
       if (!dir) console.log("No available direction.");

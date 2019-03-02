@@ -282,7 +282,7 @@ module.exports = {
     return false;
   },
 
-    followEnemy(TeamRocket) {
+  followEnemy(TeamRocket) {
     console.log("Follow Enemy");
     TeamRocket.buildMatrix();
     let dir, head = TeamRocket.head
