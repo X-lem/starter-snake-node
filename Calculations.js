@@ -159,6 +159,49 @@ module.exports = {
     return false;
   },
 
+  // Searches for the closest enemy head that I'm longer than.
+  // Returns false if can't reach any
+  huntEnemy(TeamRocket) {
+    console.log("Hunting enemy");
+    var shorterEnemies = [];
+    var pathToEnemies = [];
+
+    TeamRocket.enemies.forEach((enemy) => {
+      if (enemy.body.length < TeamRocket.snake.length) {
+        shorterEnemies.push(enemy.body);
+      }
+    });
+
+    if (shorterEnemies.length === 0) { 
+      console.log("No shorter enemies");
+      return false; 
+    }
+
+    console.log("Test 1");
+
+    // Find the path to each snake
+    shorterEnemies.forEach((snake) => {
+
+      TeamRocket.buildMatrix();
+
+      var shortPath = TeamRocket.breadthFirstSearch(TeamRocket.head, snake[0]);
+      console.log("Path", shortPath, shortPath.length);
+
+      if (shortPath.length > 0) pathToEnemies.push(shortPath);
+    });
+
+    console.log("pathToEnemies", pathToEnemies);
+
+    // Order snakes by closest
+    pathToEnemies = _.sortBy(pathToEnemies, [function(path) {
+      console.log("Enemy length", path.length);
+      return path.length;
+    }]);
+    console.log("pathToEnemies", pathToEnemies);
+
+
+  },
+
   // Checks for an alternate route
   // Returns false otherwise
   // Note: dangerSpots does not have to be the same as TeamRocket.dangerZones

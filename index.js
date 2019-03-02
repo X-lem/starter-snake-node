@@ -42,8 +42,8 @@ app.post('/start', (request, response) => {
   // Response data
   const data = {
     // name: 'Team Rocket',
-    color: '#bb3322', // #741ECD - Nice purple
-    // color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
+    // color: '#bb3322', // #741ECD - Nice purple
+    color: '#'+(Math.random()*0xFFFFFF<<0).toString(16),
     headType: 'evil',
     tailType: 'bolt'
   }
@@ -112,6 +112,11 @@ app.post('/move', (request, response) => {
     }
   }
   else { console.log("No food to eat.") }
+
+  // Can I eat an enemy?
+  if (!dir) {
+    dir = C.huntEnemy(TeamRocket);
+  }
 
 
   // Follow tail
