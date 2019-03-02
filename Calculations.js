@@ -111,7 +111,6 @@ module.exports = {
 
     // Index starts at 1 because to ensure out of bounds doesn't happen on looking for tail.
     for (var i = 1; i < length - 1; i++) {
-      if (i > 1) break;
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
@@ -144,6 +143,12 @@ module.exports = {
             console.log("No alt tail path found");
             continue;
           }
+        }
+
+        // Snake will trap itself
+        if (path.length < i) {
+          console.log("Sanke will trap itself");
+          return false;
         }
 
 
