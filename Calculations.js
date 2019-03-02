@@ -68,11 +68,11 @@ module.exports = {
       }
 
       // Will I be stuck in a corner?
-      if (i + 1 < bestFood.length) {
+      if (this.isFoodTrap2(TeamRocket, pathsToFood[i])) {
+        if (i + 1 < bestFood.length) {
         // Can I get another food?
         if (this.isFoodTrap(TeamRocket, pathsToFood[i], bestFood, i)) {
           // Can I follow my tail
-          if (this.isFoodTrap2(TeamRocket, pathsToFood[i])) {
             console.log("It's a trap!");
             i++;
             continue;
