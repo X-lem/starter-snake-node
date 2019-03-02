@@ -111,6 +111,7 @@ module.exports = {
 
     // Index starts at 1 because to ensure out of bounds doesn't happen on looking for tail.
     for (var i = 1; i < length - 1; i++) {
+      if (i > 1) break;
       TeamRocket.buildMatrix();
 
       tail = TeamRocket.snake[length - i];
