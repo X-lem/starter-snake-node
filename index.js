@@ -146,6 +146,8 @@ app.post('/end', (request, response) => {
   console.log("xxxx", request.body.you.name, "xxxx");
   console.log("Team Rocket is blasting off again...");
   // NOTE: Do something to end the game
+
+  return response.json({})
 })
 
 // --- SNAKE LOGIC GOES ABOVE THIS LINE ---
