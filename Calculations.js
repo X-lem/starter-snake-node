@@ -165,6 +165,23 @@ module.exports = {
     return false;
   },
 
+
+  // Hunt for a specific object whether it's a tail or piece of food
+  huntForObject(TeamRocket, foodArray, depth = 0) {
+
+    // See where health is at?
+    if (TeamRocket.health <= 30) {
+
+      // Do a check. What food do I have access to.
+      // If I am the only snake that can reach the food take longest path to get it. Otherwise get the food.
+
+    }
+
+    
+
+
+  },
+
   // Checks for an alternate route
   // Returns false otherwise
   // Note: dangerSpots does not have to be the same as TeamRocket.dangerZones
